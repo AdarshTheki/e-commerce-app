@@ -4,6 +4,9 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import NodeCache from "node-cache";
+
+const nodeCache = new NodeCache();
 
 const addProduct = asyncHandler(async (req, res, _) => {
     const {
@@ -87,29 +90,35 @@ const allProducts = asyncHandler(async (req, res, _) => {
     limit = parseInt(limit);
 
     try {
-        const products = await Product.aggregate([
-            {
-                $facet: {
-                    products: [
-                        { $sort: { _id: 1 } },
-                        { $skip: (page - 1) * limit },
-                        { $limit: limit },
-                        {
-                            $project: {
-                                _id: 1,
-                                title: 1,
-                                brand: 1,
-                                category: 1,
-                                discount: 1,
-                                price: 1,
-                                images: 1,
+        let products;
+        if (nodeCache.has("allProducts")) {
+            products = JSON.parse(nodeCache.get("allProducts"));
+        } else {
+            products = await Product.aggregate([
+                {
+                    $facet: {
+                        products: [
+                            { $sort: { _id: 1 } },
+                            { $skip: (page - 1) * limit },
+                            { $limit: limit },
+                            {
+                                $project: {
+                                    _id: 1,
+                                    title: 1,
+                                    brand: 1,
+                                    category: 1,
+                                    discount: 1,
+                                    price: 1,
+                                    images: 1,
+                                },
                             },
-                        },
-                    ],
-                    totals: [{ $count: "count" }],
+                        ],
+                        totals: [{ $count: "count" }],
+                    },
                 },
-            },
-        ]);
+            ]);
+            nodeCache.set("allProducts", JSON.stringify(products), 60 * 5);
+        }
 
         if (!products) {
             throw new ApiError(400, "products does not exists");
@@ -137,7 +146,14 @@ const allProducts = asyncHandler(async (req, res, _) => {
 
 const categories = asyncHandler(async (req, res, _) => {
     try {
-        const results = await Product.distinct("category");
+        let results;
+        if (nodeCache.has("categories")) {
+            results = JSON.parse(nodeCache.get("categories"));
+        } else {
+            results = await Product.distinct("category");
+            nodeCache.set("categories", JSON.stringify(results), 60 * 5);
+        }
+
         return res
             .status(200)
             .json(new ApiResponse(200, results, "fetch all categories"));
@@ -146,7 +162,7 @@ const categories = asyncHandler(async (req, res, _) => {
     }
 });
 
-const brands = asyncHandler(async(req, res)=> {
+const brands = asyncHandler(async (req, res) => {
     try {
         const results = await Product.distinct("brand");
         return res
@@ -155,7 +171,7 @@ const brands = asyncHandler(async(req, res)=> {
     } catch (error) {
         throw new ApiError(500, error?.message);
     }
-})
+});
 
 const productsCategory = asyncHandler(async (req, res) => {
     try {

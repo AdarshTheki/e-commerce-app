@@ -62,12 +62,13 @@ const removeOneItem = asyncHandler(async (req, res) => {
         if (!result) {
             throw new ApiError(404, "items not found");
         }
-
+        
+        nodeCache.del("userCart");
+        
         result.items = result.items.filter(
             (item) => item.productId.toString() !== productId?.toString()
         );
 
-        nodeCache.del("userCart");
 
         await result.save();
 
@@ -224,7 +225,7 @@ const userCart = asyncHandler(async (req, res) => {
         }
         return res
             .status(200)
-            .json(new ApiResponse(200, carts[0], "Get user cart items"));
+            .json(new ApiResponse(200, carts[0]?.items, "Get user cart items"));
     } catch (error) {
         throw new ApiError(500, error?.message);
     }
