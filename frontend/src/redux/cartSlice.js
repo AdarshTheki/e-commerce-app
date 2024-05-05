@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { status } from '../utils/helpers';
-import { instance } from '../axios/config';
+import { status, instance } from '../utils';
 
 const cartSlice = createSlice({
     name: 'carts',
@@ -51,5 +50,5 @@ export const fetchCarts = createAsyncThunk('cart/fetchCart', async () => {
 export const getCarts = (state) => state.cart.carts;
 export const getCartsStatus = (state) => state.cart.cartsStatus;
 
-export const { removeFromCart } = cartSlice.actions;
+export const { removeFromCart, clearCart } = cartSlice.actions;
 export default cartSlice.reducer;
