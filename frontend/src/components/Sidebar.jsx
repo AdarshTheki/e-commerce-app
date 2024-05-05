@@ -1,42 +1,81 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
+import { NavLink } from 'react-router-dom';
+import { IoCloseSharp } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCategories } from '../redux/categorySlice';
 import { getSidebarStatus, setSidebar } from '../redux/uiSlice';
-import { NavLink } from 'react-router-dom';
-import { IoCloseSharp } from 'react-icons/io5';
-import { Button } from '../utils/helpers';
+import { Button, logo } from '../utils';
+import HeaderSearch from './HeaderSearch';
+import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
 
 const Sidebar = () => {
     const dispatch = useDispatch();
     const isSidebarOn = useSelector(getSidebarStatus);
     const categories = useSelector(getAllCategories);
 
+    const Navigation = () => {
+        return (
+            <>
+                <NavLink
+                    to='/'
+                    className='block py-2 px-4 capitalize font-medium hover:bg-gray-800'>
+                    Home
+                </NavLink>
+                <NavLink
+                    to='/login'
+                    className='block py-2 px-4 capitalize font-medium hover:bg-gray-800'>
+                    login
+                </NavLink>
+                <NavLink
+                    to='/cart'
+                    className='block py-2 px-4 capitalize font-medium hover:bg-gray-800'>
+                    Cart
+                </NavLink>
+                <hr />
+            </>
+        );
+    };
+
+    const Categories = () => {
+        return (
+            <>
+                <h1 className='text-white pl-4 py-2 font-semibold'>All Categories</h1>
+                {categories?.map((category, index) => (
+                    <NavLink
+                        key={index}
+                        to={`/category/${category}`}
+                        className='block py-2 px-4 text-sm capitalize font-medium hover:bg-gray-800'>
+                        {category?.replace('-', ' ')}
+                    </NavLink>
+                ))}
+            </>
+        );
+    };
+
     return (
-        <div
-            className={
-                !isSidebarOn
-                    ? 'hidden'
-                    : 'scrollbar fixed z-30 top-0 left-0 w-[200px] h-full bg-black/50 flex items-start justify-start overflow-y-auto'
-            }>
-            <div className='w-full bg-slate-50 relative'>
-                <h2 className='text-lg font-medium p-4'>All Categories</h2>
-                <ul className='flex flex-col'>
-                    {categories?.map((category) => (
-                        <NavLink
-                            key={category}
-                            to={`/category/${category}`}
-                            className='capitalize text-sm py-1 px-4 hover:bg-slate-300 w-full'>
-                            {category?.replace('-', ' ')}
-                        </NavLink>
-                    ))}
-                </ul>
-            </div>
+        <aside
+            className={`bg-gray-900 text-gray-300 w-[250px] h-full fixed top-0 left-0 overflow-y-auto z-10 ${
+                isSidebarOn ? '' : 'hidden'
+            } sidebar scrollbar`}>
+            <section className='py-4 flex items-center gap-2 justify-center'>
+                <img src={logo[1]} alt='lgo' width={20} />
+                <p className='text-white font-semibold '>ShopUp</p>
+            </section>
+            <section className='sm:hidden flex flex-col items-center gap-2'>
+                <HeaderSearch />
+            </section>
+            <nav>
+                <Navigation />
+            </nav>
+            <nav>
+                <Categories />
+            </nav>
             <Button
-                Icon={<IoCloseSharp />}
+                Icon={<IoCloseSharp className='text-gray-200 font-bold text-xl' />}
                 onClick={() => dispatch(setSidebar())}
-                className='absolute right-2 top-3'
+                className='absolute top-2 right-2 hover:bg-gray-700'
             />
-        </div>
+        </aside>
     );
 };
 

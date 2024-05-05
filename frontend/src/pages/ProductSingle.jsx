@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { status } from '../utils/helpers';
+import { ProductDetail, Loader } from '../components';
 import {
     fetchProductSingle,
     getProductSingle,
     getSingleProductStatus,
 } from '../redux/productSlice';
-import ProductDetail from '../components/ProductDetail';
-import Loader from '../components/Loader';
+import { status } from '../utils';
 
 const ProductSingle = () => {
     const dispatch = useDispatch();

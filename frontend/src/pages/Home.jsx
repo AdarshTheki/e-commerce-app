@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { getAllProducts, getAllProductsStatus, fetchProducts } from '../redux/productSlice';
-import { status } from '../utils/helpers';
-import ProductList from '../components/ProductList';
-import HeaderSlider from '../components/HeaderSlider';
-import { NavLink } from 'react-router-dom';
+import { ProductList, HeaderSlider } from '../components';
+import { status } from '../utils';
 
 const ProductSingle = () => {
     const dispatch = useDispatch();
@@ -59,7 +58,6 @@ const ProductSingle = () => {
                     name='See your products'
                 />
             </main>
-
 
             <button
                 disabled={getLimit >= 100}

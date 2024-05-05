@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { getAllCategories, fetchCategories } from '../redux/categorySlice';
 import { setSidebar } from '../redux/uiSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { FaSearch, FaBars } from 'react-icons/fa';
-import { Button } from '../utils/helpers';
+import { FaBars, FaAngleLeft, FaAngleRight } from 'react-icons/fa';
+import { Button, logo } from '../utils';
+import HeaderSearch from './HeaderSearch';
+import { useRef } from 'react';
 
 const Header = () => {
     const dispatch = useDispatch();
@@ -15,56 +17,90 @@ const Header = () => {
 
     const categories = useSelector(getAllCategories);
 
+    const Categories = () => {
+        const containerRef = useRef(null);
+
+        const sideScroll = useCallback((direction) => {
+            const scrollAmount = direction === 'left' ? -400 : 400;
+            containerRef.current.scrollBy({
+                left: scrollAmount,
+                behavior: 'smooth',
+            });
+        }, []);
+
+        return (
+            <>
+                <div
+                    ref={containerRef}
+                    className='flex capitalize gap-4 pt-4 text-sm items-center md:max-w-[90vw] sm:max-w-[85vw] max-w-[75vw] mx-auto overflow-hidden'>
+                    {categories?.map((category, index) => (
+                        <NavLink
+                            key={index}
+                            to={`/category/${category}`}
+                            className='text-nowrap hover:text-gray-400'>
+                            {category.replace('-', ' ')}
+                        </NavLink>
+                    ))}
+                    <button
+                        onClick={() => sideScroll('left')}
+                        className='absolute bg-gray-700 hover:bg-gray-600 p-1.5 flex items-center rounded-full h-8 w-8 left-2 bottom-3'>
+                        <FaAngleLeft fontSize={20} />
+                    </button>
+                    <button
+                        onClick={() => sideScroll('right')}
+                        className='absolute bg-gray-700 hover:bg-gray-600 p-1.5 flex items-center rounded-full h-8 w-8 right-2 bottom-3'>
+                        <FaAngleRight fontSize={20} />
+                    </button>
+                </div>
+            </>
+        );
+    };
+
     return (
-        <div className='py-2 px-5'>
-            <ul className='flex capitalize sm:gap-10 gap-4 text-xl items-center justify-center w-full'>
-                <li>
-                    <NavLink to='/'>Home</NavLink>
-                </li>
-                <li>
-                    <NavLink to='/register'>Register</NavLink>
-                </li>
-                <li>
-                    <NavLink to='/login'>Login</NavLink>
-                </li>
-                <li>
-                    <NavLink to='/cart'>Cart</NavLink>
-                </li>
-            </ul>
-            <main className='sm:flex items-center gap-5 max-w-screen-md mx-auto'>
-                <section className='flex space-x-4 items-center pb-2'>
-                    <Button Icon={<FaBars />} onClick={() => dispatch(setSidebar())} />
-                    <NavLink
-                        to={'/'}
-                        className='hover:border-gray-900 text-xl font-medium border-transparent border-b-2 mr-5 duration-300'>
-                        ShopeUp
-                    </NavLink>
-                </section>
-                <div className='w-full flex flex-col'>
-                    <label htmlFor='searchTerm' className='w-full mb-2 flex gap-1 items-center'>
-                        <input
-                            type='text'
-                            id='searchTerm'
-                            placeholder='Search your perfect item is here'
-                            className='w-full py-1 pl-5 border-2 rounded border-gray-800/80 outline-none capitalize'
+        <div className='bg-gray-900 text-white py-4 relative'>
+            <main className='sticky top-0 w-full z-10 max-w-screen-xl mx-auto'>
+                <div className='container mx-auto flex justify-between items-center px-4'>
+                    <div className='flex items-center'>
+                        <Button
+                            Icon={<FaBars />}
+                            className='mr-5 md:hidden block hover:bg-gray-700'
+                            onClick={() => dispatch(setSidebar())}
                         />
-                        <button className='flex items-center justify-center rounded px-5 py-2.5 bg-slate-800 hover:bg-slate-800/80'>
-                            <FaSearch className='text-white' />
-                        </button>
-                    </label>
-                    <ul className='flex capitalize flex-wrap text-sm items-center w-full'>
-                        {categories.slice(0, 6).map((category) => (
-                            <li key={category}>
-                                <NavLink
-                                    to={`/category/${category}`}
-                                    className='hover:border-gray-900 border-transparent border-b-2 mr-5 duration-300'>
-                                    {category.replace('-', ' ')}
+                        <img src={logo[1]} alt='Logo' className='h-6 mr-2' />
+                        <h1 className='text-lg font-semibold'>ShopUp</h1>
+                    </div>
+                    <nav>
+                        <ul className='md:flex hidden capitalize space-x-4'>
+                            <li>
+                                <NavLink to='/' className='hover:text-gray-300'>
+                                    home
                                 </NavLink>
                             </li>
-                        ))}
-                    </ul>
+                            <li>
+                                <NavLink to='/login' className='hover:text-gray-300'>
+                                    login
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink to='/register' className='hover:text-gray-300'>
+                                    register
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink to='/cart' className='hover:text-gray-300'>
+                                    cart
+                                </NavLink>
+                            </li>
+                        </ul>
+                    </nav>
+                    <div className='sm:flex hidden items-center'>
+                        <HeaderSearch />
+                    </div>
                 </div>
             </main>
+            <section className='hidden sm:block'>
+                <Categories />
+            </section>
         </div>
     );
 };

@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { formatPrice } from '../utils/helpers';
-import { instance } from '../axios/config';
-import toast from 'react-hot-toast';
+import { formatPrice, instance, toasts } from '../utils';
 
 const Container = ({
     title,
@@ -27,9 +25,9 @@ const Container = ({
                     quantity: quantity,
                 },
             });
-            toast.success('Product added to cart');
+            toasts({ message: 'Product added to cart' });
         } catch (error) {
-            toast.error(error?.message);
+            toasts({ type: false, message: error?.message });
         }
     };
 
@@ -60,23 +58,8 @@ const Container = ({
                     electronics to home decor and beauty products, our app has everything you need
                     in one place. Download our ecommerce app now and start shopping with ease!
                 </p>
-                <section className=' space-x-4'>
-                    <span>Quantity: </span>
-                    <button
-                        onClick={() => setQuantity((prev) => prev + 1)}
-                        className='px-3 py-1 text-sm border-2 border-gray-800 bg-gray-800 hover:bg-gray-700 duration-200 rounded text-white font-medium'>
-                        +
-                    </button>
-                    <button className='px-3 py-1 text-sm border-2 border-gray-800  rounded text-gray-800 font-medium'>
-                        {quantity}
-                    </button>
-                    <button
-                        onClick={() => setQuantity((prev) => prev - 1)}
-                        className='px-3 py-1 text-sm border-2 border-gray-800 bg-gray-800 hover:bg-gray-700 duration-200 rounded text-white font-medium'>
-                        -
-                    </button>
-                </section>
                 <p className='capitalize first-line:font-medium'>{`rating: ${rating} | brand: ${brand} | category: ${category}`}</p>
+
                 <section className='bg-gray-200 p-4'>
                     <p>
                         <span className='line-through text-rose-600'>{formatPrice(price)}</span>{' '}
@@ -90,6 +73,24 @@ const Container = ({
                             {discount} off
                         </span>
                     </p>
+                    <section className='space-x-4 mt-4'>
+                        <span>Quantity:</span>
+                        <button
+                            disabled={quantity >= 5}
+                            onClick={() => setQuantity((prev) => prev + 1)}
+                            className='disabled:opacity-30 px-1 py-0 text-sm border-2 border-gray-800 bg-gray-800 hover:bg-gray-700 duration-200 rounded text-white font-medium'>
+                            +
+                        </button>
+                        <button className='px-2 py-0 text-sm border-2 border-gray-800  rounded text-gray-800 font-medium'>
+                            {quantity}
+                        </button>
+                        <button
+                            disabled={quantity <= 1}
+                            onClick={() => setQuantity((prev) => prev - 1)}
+                            className='disabled:opacity-30 px-1 py-0 text-sm border-2 border-gray-800 bg-gray-800 hover:bg-gray-700 duration-200 rounded text-white font-medium'>
+                            -
+                        </button>
+                    </section>
                 </section>
                 <section className='space-x-4'>
                     <button

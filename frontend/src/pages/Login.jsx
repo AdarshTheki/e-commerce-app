@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
-import { instance } from '../axios/config';
+
 import { setUser } from '../redux/authSlice';
-import Inputs from '../utils/Inputs';
+import { instance, Inputs, toasts } from '../utils';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -22,14 +21,13 @@ const Register = () => {
         try {
             const result = await instance.post('/users/login', data);
             if (result.data) {
-                console.log(result.data.data)
+                console.log(result.data.data);
                 dispatch(setUser(result.data.data.loggedInUser));
-                toast.success('Login successful');
+                toasts({ message: 'Login successful' });
                 navigate('/');
             }
         } catch (error) {
-            console.log(error);
-            toast.error(`Login failed, ${error?.message}`);
+            toasts({ type: false, message: error?.message || 'Login failed' });
         } finally {
             setLoading(false);
         }

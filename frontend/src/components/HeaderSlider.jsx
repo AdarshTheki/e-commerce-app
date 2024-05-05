@@ -1,7 +1,7 @@
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { sliderImgs } from '../utils/helpers';
+import { sliderImgs } from '../utils';
 
 const HeaderSlider = () => {
     let settings = {

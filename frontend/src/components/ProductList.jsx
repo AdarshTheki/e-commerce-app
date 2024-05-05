@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { formatPrice, status } from '../utils/helpers';
+import { formatPrice, status } from '../utils';
 import { NavLink } from 'react-router-dom';
 import Loader from './Loader';
 

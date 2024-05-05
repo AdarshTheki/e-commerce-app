@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { instance } from '../axios/config';
-import Inputs from '../utils/Inputs';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import toast from 'react-hot-toast';
+
+import { Inputs, instance, toasts } from '../utils';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -19,12 +18,11 @@ const Register = () => {
         try {
             const result = await instance.post('/users/register', data);
             if (result) {
-                toast.success('Register successfully');
+                toasts({ message: 'Register successfully' });
                 navigate('/login');
             }
         } catch (error) {
-            console.log(error);
-            toast.error(error?.message);
+            toasts({ type: false, message: error?.message || 'Register User failed' });
         } finally {
             setLoading(false);
         }
