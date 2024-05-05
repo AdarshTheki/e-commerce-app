@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { instance } from './axios/config';
+import { instance, toasts } from './utils';
 import { setUser } from './redux/authSlice';
 import toast from 'react-hot-toast';
 import Header from './components/Header';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
+import Footer from './components/Footer';
 
 const App = () => {
     const dispatch = useDispatch();
@@ -18,11 +19,10 @@ const App = () => {
                 .get('/users/current-user')
                 .then((res) => {
                     dispatch(setUser(res.data.data));
-                    toast.success('Login successful');
+                    toasts({ message: 'Login successful' });
                 })
                 .catch((error) => {
-                    console.log(error?.message);
-                    toast.error(`Login failed, ${error?.message}`);
+                    toasts({ type: false, message: error?.message });
                 })
                 .finally(() => {
                     setLoading(false);
@@ -32,7 +32,7 @@ const App = () => {
     }, [dispatch]);
 
     return (
-        <div>
+        <div className='max-w-screen-2xl mx-auto'>
             {/* {loading ? (
                 <p className='flex h-screen text-xl items-center justify-center'>loading...</p>
             ) : (
@@ -44,6 +44,7 @@ const App = () => {
             <Header />
             <Sidebar />
             <Outlet />
+            <Footer/>
         </div>
     );
 };
