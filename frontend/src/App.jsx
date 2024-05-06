@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { Outlet } from 'react-router-dom';
+
 import { instance, toasts } from './utils';
 import { setUser } from './redux/authSlice';
-import toast from 'react-hot-toast';
-import Header from './components/Header';
-import { Outlet } from 'react-router-dom';
-import Sidebar from './components/Sidebar';
-import Footer from './components/Footer';
+import { Sidebar, Footer, Header } from './components';
 
 const App = () => {
     const dispatch = useDispatch();
@@ -33,18 +31,10 @@ const App = () => {
 
     return (
         <div className='max-w-screen-2xl mx-auto'>
-            {/* {loading ? (
-                <p className='flex h-screen text-xl items-center justify-center'>loading...</p>
-            ) : (
-                <div>
-                    <Header />
-                    <Outlet />
-                </div>
-            )} */}
             <Header />
             <Sidebar />
             <Outlet />
-            <Footer/>
+            <Footer />
         </div>
     );
 };

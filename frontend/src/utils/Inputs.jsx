@@ -3,8 +3,8 @@ import React, { forwardRef, useId } from 'react';
 const Inputs = forwardRef(function Inputs({ label, type = 'text', className = '', ...props }, ref) {
     const id = useId();
     return (
-        <div className='flex w-full flex-col mb-4 relative'>
-            <label htmlFor={id} className='cursor-pointer'>
+        <div className='relative'>
+            <label htmlFor={id} className='block text-gray-600'>
                 {label}
             </label>
             <input
@@ -12,7 +12,7 @@ const Inputs = forwardRef(function Inputs({ label, type = 'text', className = ''
                 {...props}
                 type={type}
                 ref={ref}
-                className={`w-full p-2 border rounded-md ${className}`}
+                className={`w-full px-4 py-2 rounded-md border border-gray-400 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 ${className}`}
                 autoComplete='off'
             />
         </div>

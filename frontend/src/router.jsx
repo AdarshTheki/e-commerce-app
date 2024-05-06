@@ -1,6 +1,6 @@
 import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
-import { Cart, CategoryProduct, Home, Login, ProductSingle, Register, Search } from './pages';
+import { Cart, CategoryProduct, Home, Login, ProductSingle, Register, Search, User } from './pages';
 import App from './App';
 
 export const router = createBrowserRouter([
@@ -31,6 +31,10 @@ export const router = createBrowserRouter([
             {
                 path: '/cart',
                 element: <Cart />,
+            },
+            {
+                path: '/user',
+                element: <User />,
             },
             {
                 path: '/search/:searchTerm',
