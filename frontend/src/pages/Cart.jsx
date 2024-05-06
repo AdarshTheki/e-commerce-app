@@ -26,7 +26,7 @@ const Cart = () => {
 
     let totals = carts.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
-    if (carts === 0) return <CartEmpty />;
+    if (carts.length === 0) return <CartEmpty />;
 
     return (
         <div>
