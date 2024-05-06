@@ -1,12 +1,12 @@
-import React, { useCallback, useRef } from 'react';
+import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { IoCloseSharp } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { getAllCategories } from '../redux/categorySlice';
 import { getSidebarStatus, setSidebar } from '../redux/uiSlice';
-import { Button, logo } from '../utils';
 import HeaderSearch from './HeaderSearch';
-import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
+import { Button, logo } from '../utils';
 
 const Sidebar = () => {
     const dispatch = useDispatch();

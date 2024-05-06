@@ -1,7 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '../utils';
 import { FaArrowLeftLong } from 'react-icons/fa6';
+
+import { Button } from '../utils';
 
 const CartEmpty = () => {
     const navigate = useNavigate();

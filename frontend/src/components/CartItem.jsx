@@ -1,8 +1,9 @@
 import React from 'react';
-import { Button, formatPrice, instance, toasts } from '../utils';
 import { IoIosClose } from 'react-icons/io';
-import { removeFromCart } from '../redux/cartSlice';
 import { useDispatch } from 'react-redux';
+
+import { removeFromCart } from '../redux/cartSlice';
+import { Button, formatPrice, instance, toasts } from '../utils';
 
 const CartItem = ({
     productId,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaInstagram, FaLinkedin, FaGithub, FaTwitter, FaFacebook, FaBars } from 'react-icons/fa';
+import { FaInstagram, FaLinkedin, FaGithub, FaTwitter, FaFacebook, } from 'react-icons/fa';
 import { NavLink } from 'react-router-dom';
 import { logo } from '../utils';
 
