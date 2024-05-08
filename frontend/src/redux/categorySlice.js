@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { status, instance } from '../utils';
+import { instance } from '../utils';
 
 const initialState = {
     categories: [],
-    categoriesStatus: status.idle,
+    categoriesStatus: 'idle',
     categoryProducts: [],
-    categoryProductsStatus: status.idle,
+    categoryProductsStatus: 'idle',
 };
 
 const categorySlice = createSlice({
@@ -14,30 +14,30 @@ const categorySlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(fetchCategories.pending, (state, action) => {
-                state.categoriesStatus = status.loading;
+            .addCase(fetchCategories.pending, (state) => {
+                state.categoriesStatus = 'loading';
             })
 
             .addCase(fetchCategories.fulfilled, (state, action) => {
                 state.categories = action.payload;
-                state.categoriesStatus = status.succeed;
+                state.categoriesStatus = 'succeed';
             })
 
-            .addCase(fetchCategories.rejected, (state, action) => {
-                state.categoriesStatus = status.failed;
+            .addCase(fetchCategories.rejected, (state) => {
+                state.categoriesStatus = 'failed';
             })
 
-            .addCase(fetchProductsOfCategory.pending, (state, action) => {
-                state.categoryProductsStatus = status.loading;
+            .addCase(fetchProductsOfCategory.pending, (state) => {
+                state.categoryProductsStatus = 'loading';
             })
 
             .addCase(fetchProductsOfCategory.fulfilled, (state, action) => {
                 state.categoryProducts = action.payload;
-                state.categoryProductsStatus = status.succeed;
+                state.categoryProductsStatus = 'succeed';
             })
 
-            .addCase(fetchProductsOfCategory.rejected, (state, action) => {
-                state.categoryProductsStatus = status.failed;
+            .addCase(fetchProductsOfCategory.rejected, (state) => {
+                state.categoryProductsStatus = 'failed';
             });
     },
 });

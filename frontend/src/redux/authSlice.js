@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { toasts } from '../utils';
 
 const authSlice = createSlice({
     name: 'auth',
@@ -6,9 +7,11 @@ const authSlice = createSlice({
     reducers: {
         setUser: (state, action) => {
             state.user = action.payload;
+            toasts({ message: 'User Login successful' });
         },
         setLogout: (state) => {
             state.user = null;
+            toasts({ message: 'User Logout successful' });
         },
     },
 });
