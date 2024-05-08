@@ -4,11 +4,8 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
-import NodeCache from "node-cache";
 
-const nodeCache = new NodeCache();
-
-const addProduct = asyncHandler(async (req, res, _) => {
+const addProduct = asyncHandler(async (req, res) => {
     const {
         title,
         description,
@@ -30,7 +27,9 @@ const addProduct = asyncHandler(async (req, res, _) => {
         !rating ||
         !stock
     ) {
-        throw new ApiError(404, "missing inputs fields");
+        return res
+            .status(401)
+            .json(new ApiResponse(401, null, "missing inputs fields"));
     }
 
     try {
@@ -38,7 +37,15 @@ const addProduct = asyncHandler(async (req, res, _) => {
         const imagesPath = await uploadOnCloudinary(path.images);
 
         if (!thumbnailPath && !imagesPath) {
-            throw new ApiError(404, "files not upload properly on cloudinary");
+            return res
+                .status(401)
+                .json(
+                    new ApiResponse(
+                        401,
+                        null,
+                        "files not upload properly on cloudinary"
+                    )
+                );
         }
 
         const product = await Product.create({
@@ -55,73 +62,75 @@ const addProduct = asyncHandler(async (req, res, _) => {
         });
 
         if (!product) {
-            throw new ApiError(400, "create product failed");
+            return res
+                .status(401)
+                .json(new ApiResponse(401, null, "create product failed"));
         }
 
         return res
             .status(200)
             .json(new ApiResponse(200, product, "create product"));
     } catch (error) {
-        throw new ApiError(500, error?.message);
+        return res.status(500).json(new ApiResponse(500, null, error?.message));
     }
 });
 
-const singleProduct = asyncHandler(async (req, res, _) => {
+const singleProduct = asyncHandler(async (req, res) => {
     const { productId } = req.params;
     if (!isValidObjectId(productId)) {
-        throw new ApiError(401, "Invalid product ID");
+        return res
+            .status(401)
+            .json(new ApiResponse(401, null, "Invalid product ID"));
     }
     try {
         const product = await Product.findOne({ _id: productId });
         if (!product) {
-            throw new ApiError(400, "Product not found");
+            return res
+                .status(401)
+                .json(new ApiResponse(401, null, "Product not found"));
         }
         return res
             .status(200)
             .json(new ApiResponse(200, product, "Fetch Single Product"));
     } catch (error) {
-        throw new ApiError(500, error?.message);
+        return res.status(500).json(new ApiResponse(500, null, error?.message));
     }
 });
 
-const allProducts = asyncHandler(async (req, res, _) => {
+const allProducts = asyncHandler(async (req, res) => {
     let { page = 1, limit = 20 } = req.query;
     page = parseInt(page);
     limit = parseInt(limit);
 
     try {
-        let products;
-        if (nodeCache.has("allProducts")) {
-            products = JSON.parse(nodeCache.get("allProducts"));
-        } else {
-            products = await Product.aggregate([
-                {
-                    $facet: {
-                        products: [
-                            { $sort: { _id: 1 } },
-                            { $skip: (page - 1) * limit },
-                            { $limit: limit },
-                            {
-                                $project: {
-                                    _id: 1,
-                                    title: 1,
-                                    brand: 1,
-                                    category: 1,
-                                    discount: 1,
-                                    price: 1,
-                                    images: 1,
-                                },
+        const products = await Product.aggregate([
+            {
+                $facet: {
+                    products: [
+                        { $sort: { _id: 1 } },
+                        { $skip: (page - 1) * limit },
+                        { $limit: limit },
+                        {
+                            $project: {
+                                _id: 1,
+                                title: 1,
+                                brand: 1,
+                                category: 1,
+                                discount: 1,
+                                price: 1,
+                                images: 1,
                             },
-                        ],
-                        totals: [{ $count: "count" }],
-                    },
+                        },
+                    ],
+                    totals: [{ $count: "count" }],
                 },
-            ]);
-            nodeCache.set("allProducts", JSON.stringify(products), 60 * 5);
-        }
+            },
+        ]);
 
-        if (!products) {
-            throw new ApiError(400, "products does not exists");
+        if (products.length === 0) {
+            return res
+                .status(500)
+                .json(new ApiResponse(500, null, "products does not exists"));
         }
 
         return res.status(200).json(
@@ -140,25 +149,18 @@ const allProducts = asyncHandler(async (req, res, _) => {
             )
         );
     } catch (error) {
-        throw new ApiError(500, error?.message);
+        return res.status(500).json(new ApiResponse(500, null, error?.message));
     }
 });
 
-const categories = asyncHandler(async (req, res, _) => {
+const categories = asyncHandler(async (req, res) => {
     try {
-        let results;
-        if (nodeCache.has("categories")) {
-            results = JSON.parse(nodeCache.get("categories"));
-        } else {
-            results = await Product.distinct("category");
-            nodeCache.set("categories", JSON.stringify(results), 60 * 5);
-        }
-
+        const results = await Product.distinct("category");
         return res
             .status(200)
             .json(new ApiResponse(200, results, "fetch all categories"));
     } catch (error) {
-        throw new ApiError(500, error?.message);
+        return res.status(500).json(new ApiResponse(500, null, error?.message));
     }
 });
 
@@ -169,7 +171,7 @@ const brands = asyncHandler(async (req, res) => {
             .status(200)
             .json(new ApiResponse(200, results, "fetch all brands"));
     } catch (error) {
-        throw new ApiError(500, error?.message);
+        return res.status(500).json(new ApiResponse(500, null, error?.message));
     }
 });
 
@@ -181,7 +183,7 @@ const productsCategory = asyncHandler(async (req, res) => {
             .status(200)
             .json(new ApiResponse(200, results, "fetch products by category"));
     } catch (error) {
-        throw new ApiError(500, error?.message);
+        return res.status(500).json(new ApiResponse(500, null, error?.message));
     }
 });
 
@@ -199,7 +201,7 @@ const productSearch = asyncHandler(async (req, res) => {
             .status(200)
             .json(new ApiResponse(200, results, "fetch products by query"));
     } catch (error) {
-        throw new ApiError(500, error?.message);
+        return res.status(500).json(new ApiResponse(500, null, error?.message));
     }
 });
 

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+
 import {
     getCategoryProductsStatus,
     getAllProductsByCategory,
@@ -18,8 +19,6 @@ const CategoryProduct = () => {
     useEffect(() => {
         dispatch(fetchProductsOfCategory(category));
     }, [dispatch, category]);
-
-    console.log(productsCategory);
 
     return (
         <div>

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getAllProducts, getAllProductsStatus, fetchProducts } from '../redux/productSlice';
-import { ProductList, HeaderSlider } from '../components';
-import { status } from '../utils';
+import { ProductList } from '../components';
+import { status, Slider } from '../utils';
 
 const ProductSingle = () => {
     const dispatch = useDispatch();
@@ -33,7 +33,7 @@ const ProductSingle = () => {
         <div>
             <section className='md:flex pt-14 max-w-screen-lg mx-auto'>
                 <div className='md:w-1/2'>
-                    <HeaderSlider />
+                    <Slider />
                 </div>
                 <div className='space-y-8 px-8'>
                     <h1 className='text-4xl text-gray-800 font-extrabold leading-none'>

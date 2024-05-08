@@ -5,7 +5,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { isValidObjectId } from "mongoose";
 import NodeCache from "node-cache";
 
-const nodeCache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
+const myCache = new NodeCache();
 
 // POST : carts/add
 const addCart = asyncHandler(async (req, res, _) => {
@@ -31,19 +31,20 @@ const addCart = asyncHandler(async (req, res, _) => {
             }
         }
 
-        nodeCache.del("userCart");
-
         await cart.save();
+
+        myCache.del("userCart");
+        myCache.del("allCarts");
 
         if (!cart) {
             return res
                 .status(400)
-                .json({ success: false, error: "Cart not found" });
+                .json(new ApiResponse(400, null, "Cart not found"));
         }
 
         return res.status(200).json(new ApiResponse(200, cart, "Added Cart"));
     } catch (error) {
-        throw new ApiError(500, error?.message);
+        return res.status(401).json(new ApiResponse(500, null, error?.message));
     }
 });
 
@@ -53,30 +54,33 @@ const removeOneItem = asyncHandler(async (req, res) => {
     const userId = req.user._id;
 
     if (!isValidObjectId(productId)) {
-        throw new ApiError("Invalid product ID");
+        return res
+            .status(401)
+            .json(new ApiResponse(401, null, "Invalid product ID"));
     }
 
     try {
         let result = await Cart.findOne({ user: userId });
 
         if (!result) {
-            throw new ApiError(404, "items not found");
+            return res
+                .status(401)
+                .json(new ApiResponse(404, null, "items not found"));
         }
-        
-        nodeCache.del("userCart");
-        
+
         result.items = result.items.filter(
             (item) => item.productId.toString() !== productId?.toString()
         );
 
-
         await result.save();
+
+        myCache.del("userCart");
 
         return res
             .status(200)
             .json(new ApiResponse(200, result, "remove one cart item"));
     } catch (error) {
-        throw new ApiError(500, error?.message);
+        return res.status(401).json(new ApiResponse(500, null, error?.message));
     }
 });
 
@@ -92,14 +96,17 @@ const removeAllItems = asyncHandler(async (req, res) => {
             { new: true }
         );
 
-        nodeCache.del("userCart");
-
         if (!result) {
-            throw new ApiError(404, "Cart items not found");
+            return res
+                .status(401)
+                .json(new ApiResponse(404, null, "Cart items not found"));
         }
+
+        myCache.del("userCart");
+
         return res.status(200).json(200, {}, "Remove all items");
     } catch (error) {
-        throw new ApiError(500, error?.message);
+        return res.status(401).json(new ApiResponse(500, null, error?.message));
     }
 });
 
@@ -110,42 +117,50 @@ const allCarts = asyncHandler(async (req, res) => {
     limit = parseInt(limit);
 
     try {
-        const result = await Cart.aggregate([
-            {
-                $facet: {
-                    cartItems: [
-                        { $sort: { _id: 1 } },
-                        { $skip: (page - 1) * limit },
-                        { $limit: limit },
-                        {
-                            $lookup: {
-                                from: "users",
-                                localField: "user",
-                                foreignField: "_id",
-                                as: "user",
-                            },
-                        },
-                        {
-                            $unwind: "$user",
-                        },
-                        {
-                            $project: {
-                                _id: 1,
-                                user: {
-                                    username: "$user.username",
-                                    email: "$user.email",
+        let result;
+        if (myCache.has("allCarts")) {
+            result = myCache.get("allCarts");
+        } else {
+            result = await Cart.aggregate([
+                {
+                    $facet: {
+                        cartItems: [
+                            { $sort: { _id: 1 } },
+                            { $skip: (page - 1) * limit },
+                            { $limit: limit },
+                            {
+                                $lookup: {
+                                    from: "users",
+                                    localField: "user",
+                                    foreignField: "_id",
+                                    as: "user",
                                 },
-                                items: { $size: "$items" },
                             },
-                        },
-                    ],
-                    totals: [{ $count: "count" }],
+                            {
+                                $unwind: "$user",
+                            },
+                            {
+                                $project: {
+                                    _id: 1,
+                                    user: {
+                                        username: "$user.username",
+                                        email: "$user.email",
+                                    },
+                                    items: { $size: "$items" },
+                                },
+                            },
+                        ],
+                        totals: [{ $count: "count" }],
+                    },
                 },
-            },
-        ]);
+            ]);
+            myCache.set("allCarts", result, 10000);
+        }
 
         if (!result) {
-            throw new ApiError(400, "products does not exists");
+            return res
+                .status(401)
+                .json(new ApiResponse(400, null, "products does not exists"));
         }
 
         return res.status(200).json(
@@ -161,7 +176,7 @@ const allCarts = asyncHandler(async (req, res) => {
             )
         );
     } catch (error) {
-        throw new ApiError(500, error?.message);
+        return res.status(401).json(new ApiResponse(500, null, error?.message));
     }
 });
 
@@ -169,65 +184,61 @@ const allCarts = asyncHandler(async (req, res) => {
 const userCart = asyncHandler(async (req, res) => {
     try {
         const userId = req.user._id;
-        let carts;
-        if (nodeCache.has("userCart")) {
-            carts = JSON.parse(nodeCache.get("userCart"));
-        } else {
-            carts = await Cart.aggregate([
-                { $match: { user: userId } }, // Match orders with the current user's ID
-                {
-                    $lookup: {
-                        from: "products",
-                        localField: "items.productId",
-                        foreignField: "_id",
-                        as: "populatedItems",
-                    },
+        let carts = await Cart.aggregate([
+            { $match: { user: userId } }, // Match orders with the current user's ID
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "items.productId",
+                    foreignField: "_id",
+                    as: "populatedItems",
                 },
-                {
-                    $project: {
-                        _id: 1,
-                        items: {
-                            $map: {
-                                input: "$items",
-                                as: "item",
-                                in: {
-                                    $mergeObjects: [
-                                        "$$item",
-                                        {
-                                            $arrayElemAt: [
-                                                {
-                                                    $filter: {
-                                                        input: "$populatedItems",
-                                                        as: "populatedItem",
-                                                        cond: {
-                                                            $eq: [
-                                                                "$$populatedItem._id",
-                                                                "$$item.productId",
-                                                            ],
-                                                        },
+            },
+            {
+                $project: {
+                    _id: 1,
+                    items: {
+                        $map: {
+                            input: "$items",
+                            as: "item",
+                            in: {
+                                $mergeObjects: [
+                                    "$$item",
+                                    {
+                                        $arrayElemAt: [
+                                            {
+                                                $filter: {
+                                                    input: "$populatedItems",
+                                                    as: "populatedItem",
+                                                    cond: {
+                                                        $eq: [
+                                                            "$$populatedItem._id",
+                                                            "$$item.productId",
+                                                        ],
                                                     },
                                                 },
-                                                0,
-                                            ],
-                                        },
-                                    ],
-                                },
+                                            },
+                                            0,
+                                        ],
+                                    },
+                                ],
                             },
                         },
                     },
                 },
-            ]);
-            nodeCache.set("userCart", JSON.stringify(carts));
-        }
+            },
+        ]);
 
         if (carts[0]?.items?.length === 0) {
-            throw new ApiError(401, "cart item does not exists");
+            return res
+                .status(401)
+                .json(new ApiResponse(401, null, "cart item does not exists"));
         }
         return res
             .status(200)
             .json(new ApiResponse(200, carts[0]?.items, "Get user cart items"));
     } catch (error) {
-        throw new ApiError(500, error?.message);
+        return res.status(401).json(new ApiResponse(500, null, error?.message));
     }
 });
 

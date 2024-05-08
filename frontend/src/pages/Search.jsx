@@ -28,8 +28,6 @@ const Search = () => {
         fetchParams();
     }, [searchTerm]);
 
-    console.log(data);
-
     if (data.length === 0) {
         return (
             <div className='bg-white p-4 h-[300px] flex items-center justify-center flex-col'>

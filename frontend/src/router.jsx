@@ -1,6 +1,6 @@
 import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
-import { Cart, CategoryProduct, Home, Login, ProductSingle, Register, Search, User } from './pages';
+import { Cart, CategoryProduct, Home, ProductSingle, Search,Checkout } from './pages';
 import App from './App';
 
 export const router = createBrowserRouter([
@@ -11,14 +11,6 @@ export const router = createBrowserRouter([
             {
                 path: '/',
                 element: <Home />,
-            },
-            {
-                path: '/register',
-                element: <Register />,
-            },
-            {
-                path: '/login',
-                element: <Login />,
             },
             {
                 path: '/product/:id',
@@ -33,12 +25,12 @@ export const router = createBrowserRouter([
                 element: <Cart />,
             },
             {
-                path: '/user',
-                element: <User />,
-            },
-            {
                 path: '/search/:searchTerm',
                 element: <Search />,
+            },
+            {
+                path: '/checkout',
+                element: <Checkout />,
             },
         ],
     },

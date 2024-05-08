@@ -1,25 +1,10 @@
-import CartEmpty from './CartEmpty';
-import CartItem from './CartItem';
+import CartEmpty from './Cart/CartEmpty';
+import CartItem from './Cart/CartItem';
+import ProductDetail from './Product/ProductDetail';
+import ProductList from './Product/ProductList';
+import Authenticate from './Authenticate/Authenticate';
 import Header from './Header';
-import HeaderSlider from './HeaderSlider';
-import Loader from './Loader';
-import ProductDetail from './ProductDetail';
-import ProductList from './ProductList';
 import Sidebar from './Sidebar';
-import ChangePassword from './ChangePassword';
 import Footer from './Footer';
-import HeaderSearch from './HeaderSearch';
 
-export {
-    CartEmpty,
-    ChangePassword,
-    Footer,
-    HeaderSearch,
-    CartItem,
-    Header,
-    HeaderSlider,
-    Loader,
-    ProductDetail,
-    ProductList,
-    Sidebar,
-};
+export { Authenticate, CartEmpty, Footer, CartItem, Header, ProductDetail, ProductList, Sidebar };

@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom';
 
 import { instance, toasts } from './utils';
 import { setUser } from './redux/authSlice';
-import { Sidebar, Footer, Header } from './components';
+import { Sidebar, Footer, Header, Authenticate } from './components';
 
 const App = () => {
     const dispatch = useDispatch();
@@ -12,19 +12,15 @@ const App = () => {
 
     useEffect(() => {
         const fetchUser = async () => {
-            setLoading(true);
-            await instance
-                .get('/users/current-user')
-                .then((res) => {
-                    dispatch(setUser(res.data.data));
-                    toasts({ message: 'Login successful' });
-                })
-                .catch((error) => {
-                    toasts({ type: false, message: error?.message });
-                })
-                .finally(() => {
-                    setLoading(false);
-                });
+            try {
+                setLoading(true);
+                const response = await instance.get('/users/current-user');
+                dispatch(setUser(response.data.data));
+            } catch (error) {
+                toasts({ type: false, message: error?.message });
+            } finally {
+                setLoading(false);
+            }
         };
         fetchUser();
     }, [dispatch]);
@@ -33,6 +29,7 @@ const App = () => {
         <div className='max-w-screen-2xl mx-auto'>
             <Header />
             <Sidebar />
+            <Authenticate />
             <Outlet />
             <Footer />
         </div>

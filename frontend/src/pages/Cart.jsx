@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { NavLink } from 'react-router-dom';
 
-import { Loader, CartEmpty, CartItem } from '../components';
-import { formatPrice, status, instance, toasts } from '../utils';
+import { CartEmpty, CartItem } from '../components';
+import { Loader, formatPrice, status, instance, toasts } from '../utils';
 import { fetchCarts, getCarts, getCartsStatus, clearCart } from '../redux/cartSlice';
 
 const Cart = () => {
@@ -49,6 +50,12 @@ const Cart = () => {
                     ))}
                 </div>
             )}
+
+            <div className='py-5 mx-auto w-fit'>
+                <NavLink to='/checkout' className='px-5 py-2 bg-green-600 text-white font-semibold hover:bg-green-800'>
+                    Checkout process
+                </NavLink>
+            </div>
         </div>
     );
 };
