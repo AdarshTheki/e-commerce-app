@@ -21,10 +21,12 @@ import healthCheckRoute from "./routes/healthCheck.router.js";
 import userRoute from "./routes/user.router.js";
 import productRoute from "./routes/product.router.js";
 import cartRoute from "./routes/cart.router.js";
+import orderRoute from "./routes/order.router.js";
 
 app.use("/api/v1/healthcheck", healthCheckRoute);
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/products", productRoute);
 app.use("/api/v1/carts", cartRoute);
+app.use("/api/v1/orders", orderRoute);
 
 export { app };

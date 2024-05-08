@@ -63,7 +63,7 @@ const toasts = ({ type = true, message = '' }) => {
 const instance = axios.create({
     baseURL: 'http://localhost:8000/api/v1',
     headers: {
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjMzNWY3YTVjY2M5NGRiMzllMmE4NzkiLCJlbWFpbCI6ImFkYXJzaHZlcm1hNTQ5QGdtYWlsLmNvbSIsInVzZXJuYW1lIjoiYWRhcnNodmVybWE1NDkiLCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3MTQ5OTE4NDEsImV4cCI6MTcxNTE2NDY0MX0.7OMAIvKLkSpiy-fhyNo3hJhs02TS6yYpPcqB6jQVsYg`,
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjNiNWNiMTc3NTZmNmI5MzAxNGJiZTgiLCJlbWFpbCI6ImFkYXJzaHZlcm1hNTQ5QGdtYWlsLmNvbSIsInVzZXJuYW1lIjoiYWRhcnNoIHZlcm1hIiwicm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNzE1MTY2Mzk1LCJleHAiOjE3MTUzMzkxOTV9.3alZRDoRdK5pO9QcFL0ammf39bDhatZx0PEq4zF9jwM`,
     },
 });
 

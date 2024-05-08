@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     isSidebar: false,
     mode: '',
-    process: { status: 'customer', defaultEmail: '', email: '', shipping: {}, billing: {} },
+    process: { status: 'customer', email: '', shipping: {}, billing: {} },
 };
 
 const sidebarSlice = createSlice({
@@ -19,9 +19,6 @@ const sidebarSlice = createSlice({
         setStatus: (state, { payload }) => {
             state.process.status = payload;
         },
-        setDefaultEmail: (state, { payload }) => {
-            state.process.defaultEmail = payload;
-        },
         setEmail: (state, { payload }) => {
             state.process.email = payload;
         },
@@ -34,14 +31,7 @@ const sidebarSlice = createSlice({
     },
 });
 
-export const {
-    setSidebar,
-    setMode,
-    setStatus,
-    setDefaultEmail,
-    setEmail,
-    setBilling,
-    setShipping,
-} = sidebarSlice.actions;
+export const { setSidebar, setMode, setStatus, setEmail, setBilling, setShipping } =
+    sidebarSlice.actions;
 
 export default sidebarSlice.reducer;

@@ -1,21 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { setEmail, setStatus } from '../../redux/uiSlice';
 
 const Customer = () => {
     const dispatch = useDispatch();
-    const process = useSelector((state) => state.ui.process);
+    const { email } = useSelector((state) => state.ui.process);
     const user = useSelector((state) => state.auth.user);
+
+    useEffect(() => {
+        if (user?.email) {
+            dispatch(setEmail(user?.email));
+        }
+    }, [dispatch, user?.email]);
+
     return (
-        <>
-            <div className='font-medium text-lg'>
-                <span className='h-10 items-center justify-center bg-gray-800 text-white'>1</span>
-                <span>Customer</span>
-            </div>
-            <p>
-                <span>{user?.email}</span>
-                <span>Log out</span>
-            </p>
-        </>
+        <div className='pl-12'>
+            <p>{email || '#NA'}</p>
+            <button
+                onClick={() => dispatch(setStatus('delivery'))}
+                className='bg-gray-800 hover:bg-gray-700 text-white px-14 py-2 mt-4 rounded'>
+                Continue to delivery
+            </button>
+        </div>
     );
 };
 
