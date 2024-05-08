@@ -4,7 +4,7 @@ const Inputs = forwardRef(function Inputs({ label, type = 'text', className = ''
     const id = useId();
     return (
         <div className='relative'>
-            <label htmlFor={id} className='block text-gray-600'>
+            <label htmlFor={id} className='block text-gray-800'>
                 {label}
             </label>
             <input

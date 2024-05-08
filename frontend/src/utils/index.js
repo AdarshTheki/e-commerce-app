@@ -1,16 +1,22 @@
-import mobile_1 from '../assets/mobile.png';
-import mobile_2 from '../assets/mobile2.jpg';
-import mobile_3 from '../assets/mobile3.jpg';
-import mobile_4 from '../assets/laptop.jpg';
-import mobile_5 from '../assets/laptop2.jpg';
-import logoPng from '../assets/logo.png';
-import logoWebp from '../assets/logo.webp';
-import Button from './Button';
-import Inputs from './Inputs';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const sliderImgs = [mobile_1, mobile_2, mobile_3, mobile_4, mobile_5];
+import mobile_3 from '../assets/mobile3.jpg';
+import mobile_4 from '../assets/laptop.jpg';
+import mobile_5 from '../assets/laptop2.jpg';
+
+import logoPng from '../assets/logo.png';
+import logoWebp from '../assets/logo.webp';
+
+import Button from './Button';
+import Inputs from './Inputs';
+import Search from './Search';
+import Navigation from './Navigation';
+import Categories from './Categories';
+import Loader from './Loader';
+import Slider from './Slider';
+
+const sliderImgs = [mobile_3, mobile_4, mobile_5];
 const logo = [logoPng, logoWebp];
 
 const status = Object.freeze({
@@ -57,8 +63,15 @@ const toasts = ({ type = true, message = '' }) => {
 const instance = axios.create({
     baseURL: 'http://localhost:8000/api/v1',
     headers: {
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjMzNWY3YTVjY2M5NGRiMzllMmE4NzkiLCJlbWFpbCI6ImFkYXJzaHZlcm1hNTQ5QGdtYWlsLmNvbSIsInVzZXJuYW1lIjoiYWRhcnNodmVybWE1NDkiLCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3MTQ4MTg4MDUsImV4cCI6MTcxNDk5MTYwNX0.xIgvfNlAx9hMOL8UuLix_aNPXTBwNDTF3lw24Dxi6sg`,
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjMzNWY3YTVjY2M5NGRiMzllMmE4NzkiLCJlbWFpbCI6ImFkYXJzaHZlcm1hNTQ5QGdtYWlsLmNvbSIsInVzZXJuYW1lIjoiYWRhcnNodmVybWE1NDkiLCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3MTQ5OTE4NDEsImV4cCI6MTcxNTE2NDY0MX0.7OMAIvKLkSpiy-fhyNo3hJhs02TS6yYpPcqB6jQVsYg`,
     },
 });
 
-export { Button, Inputs, instance, sliderImgs, formatPrice, status, toasts, logo };
+// components
+export { Button, Search, Inputs, Navigation, Categories, Slider, Loader };
+
+// functions
+export { formatPrice, toasts, instance };
+
+// Objects
+export { sliderImgs, status, logo };
