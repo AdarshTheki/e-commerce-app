@@ -35,7 +35,7 @@ const Header = () => {
                         <img src={logo[1]} alt='Logo' className='h-6 mr-2' />
                         <p className='text-lg font-semibold'>ShopUp</p>
                     </section>
-                    <section className='md:flex hidden capitalize space-x-4'>
+                    <section className='md:flex hidden capitalize'>
                         <Navigation />
                     </section>
                     <div className='sm:flex hidden items-center'>

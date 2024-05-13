@@ -10,20 +10,27 @@ const Navigation = () => {
 
     return (
         <>
-            <NavLink to='/' className='block py-2 px-4 capitalize font-medium hover:bg-gray-800'>
+            <NavLink to='/' className='block py-2 px-4 capitalize font-medium hover:bg-gray-800 '>
                 Home
             </NavLink>
             <NavLink
                 to='/cart'
-                className='block py-2 px-4 capitalize font-medium hover:bg-gray-800'>
+                className='block py-2 px-4 capitalize font-medium hover:bg-gray-800 '>
                 Cart
             </NavLink>
             {user?.email ? (
-                <span
-                    className='block py-2 px-4 capitalize font-medium hover:bg-gray-800 cursor-pointer'
-                    onClick={() => dispatch(setMode('user-detail'))}>
-                    User
-                </span>
+                <>
+                    <NavLink
+                        to='/order/history'
+                        className='block py-2 px-4 capitalize font-medium hover:bg-gray-800'>
+                        order
+                    </NavLink>
+                    <span
+                        className='block py-2 px-4 capitalize font-medium hover:bg-gray-800 cursor-pointer'
+                        onClick={() => dispatch(setMode('user-detail'))}>
+                        User
+                    </span>
+                </>
             ) : (
                 <span
                     className='block py-2 px-4 capitalize font-medium hover:bg-gray-800 cursor-pointer'
