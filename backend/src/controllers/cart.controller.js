@@ -3,9 +3,6 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { isValidObjectId } from "mongoose";
-import NodeCache from "node-cache";
-
-const myCache = new NodeCache();
 
 // POST : carts/add
 const addCart = asyncHandler(async (req, res, _) => {
@@ -32,9 +29,6 @@ const addCart = asyncHandler(async (req, res, _) => {
         }
 
         await cart.save();
-
-        myCache.del("userCart");
-        myCache.del("allCarts");
 
         if (!cart) {
             return res
@@ -74,8 +68,6 @@ const removeOneItem = asyncHandler(async (req, res) => {
 
         await result.save();
 
-        myCache.del("userCart");
-
         return res
             .status(200)
             .json(new ApiResponse(200, result, "remove one cart item"));
@@ -102,8 +94,6 @@ const removeAllItems = asyncHandler(async (req, res) => {
                 .json(new ApiResponse(404, null, "Cart items not found"));
         }
 
-        myCache.del("userCart");
-
         return res.status(200).json(200, {}, "Remove all items");
     } catch (error) {
         return res.status(401).json(new ApiResponse(500, null, error?.message));
@@ -117,45 +107,39 @@ const allCarts = asyncHandler(async (req, res) => {
     limit = parseInt(limit);
 
     try {
-        let result;
-        if (myCache.has("allCarts")) {
-            result = myCache.get("allCarts");
-        } else {
-            result = await Cart.aggregate([
-                {
-                    $facet: {
-                        cartItems: [
-                            { $sort: { _id: 1 } },
-                            { $skip: (page - 1) * limit },
-                            { $limit: limit },
-                            {
-                                $lookup: {
-                                    from: "users",
-                                    localField: "user",
-                                    foreignField: "_id",
-                                    as: "user",
+        let result = await Cart.aggregate([
+            {
+                $facet: {
+                    cartItems: [
+                        { $sort: { _id: 1 } },
+                        { $skip: (page - 1) * limit },
+                        { $limit: limit },
+                        {
+                            $lookup: {
+                                from: "users",
+                                localField: "user",
+                                foreignField: "_id",
+                                as: "user",
+                            },
+                        },
+                        {
+                            $unwind: "$user",
+                        },
+                        {
+                            $project: {
+                                _id: 1,
+                                user: {
+                                    username: "$user.username",
+                                    email: "$user.email",
                                 },
+                                items: { $size: "$items" },
                             },
-                            {
-                                $unwind: "$user",
-                            },
-                            {
-                                $project: {
-                                    _id: 1,
-                                    user: {
-                                        username: "$user.username",
-                                        email: "$user.email",
-                                    },
-                                    items: { $size: "$items" },
-                                },
-                            },
-                        ],
-                        totals: [{ $count: "count" }],
-                    },
+                        },
+                    ],
+                    totals: [{ $count: "count" }],
                 },
-            ]);
-            myCache.set("allCarts", result, 10000);
-        }
+            },
+        ]);
 
         if (!result) {
             return res

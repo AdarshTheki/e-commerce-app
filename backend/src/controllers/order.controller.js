@@ -1,41 +1,47 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { razorpay } from "../utils/razorpay.js";
 import crypto from "crypto";
 import { Cart } from "../models/cart.model.js";
 import { Order } from "../models/order.model.js";
 
-const checkout = asyncHandler(async (req, res) => {
-    const price = Number(req.body.amount);
+const payOrder = asyncHandler(async (req, res) => {
     try {
-        const order = await razorpay.orders.create({
-            amount: price * 100,
-            currency: "INR",
-        });
+        const userCart = await Cart.findOne({ user: req.user._id });
 
-        if (!order) {
-            res.status(500).json({
+        if (!userCart) {
+            return res.status(400).json({
                 success: false,
-                message: "Internal error order price",
+                message: "No cart found",
             });
         }
-        return res.status(200).json({
-            success: true,
-            order,
-            message: "Order price receive successfully",
+
+        const newOrder = await Order.create({
+            user: req.user._id,
+            products: userCart.items,
+            totals: req.body.totals,
+            status: "success",
         });
+
+        if (!newOrder) {
+            return res.status(400).json({
+                success: false,
+                message: "Order not created",
+            });
+        }
+
+        userCart.items = [];
+        await userCart.save();
+
+        return res
+            .status(200)
+            .json({ success: true, newOrder, message: " Order Success" });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error?.message,
-        });
+        res.status(500).json({ message: error?.message });
     }
 });
 
 const paymentVerification = asyncHandler(async (req, res) => {
     const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
         req.body;
-
-    console.log(razorpay_order_id, razorpay_payment_id, razorpay_signature);
 
     try {
         let concatString = razorpay_order_id + "|" + razorpay_payment_id;
@@ -78,7 +84,7 @@ const paymentVerification = asyncHandler(async (req, res) => {
 
         // Redirect to UI page
         res.redirect(
-            `http://localhost:5173/checkout?refrence=${razorpay_payment_id}`
+            `http://localhost:5173/order/success?refrence=${razorpay_payment_id}`
         );
     } catch (error) {
         res.status(500).json({
@@ -95,4 +101,48 @@ const getKey = asyncHandler(async (req, res) => {
     });
 });
 
-export { checkout, paymentVerification, getKey };
+const getAllOrder = asyncHandler(async (req, res) => {
+    try {
+        const orders = await Order.find({ user: req.user._id }).select(
+            "-products"
+        );
+        if (!orders) {
+            return res.status(400).json({
+                success: false,
+                message: "No orders found",
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            orders,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error?.message,
+        });
+    }
+});
+
+const getSingleOrder = asyncHandler(async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id);
+        if (!order) {
+            return res.status(400).json({
+                success: false,
+                message: "No order found",
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            order,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error?.message,
+        });
+    }
+});
+
+export { payOrder, paymentVerification, getKey, getAllOrder, getSingleOrder };

@@ -5,9 +5,7 @@ const orderSchema = new Schema(
     {
         user: { type: Schema.Types.ObjectId, ref: "User", required: true },
         products: [cartItemSchema],
-        paymentId: { type: String, required: true },
-        orderId: { type: String, required: true },
-        signature: { type: String, required: true },
+        totals: Number,
         status: {
             type: String,
             enum: ["pending", "success"],
