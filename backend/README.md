@@ -1,4 +1,4 @@
-MERN stack, which stands for MongoDB, Express.js, React.js, and Node.js, is a popular technology stack used for building full-stack web applications.
+### MERN stack, which stands for MongoDB, Express.js, React.js, and Node.js, is a popular technology stack used for building full-stack web applications.
 
 1. **User Authentication**: Implementing user authentication features such as registration, login, logout, password reset, and session management using JSON Web Tokens (JWT) or OAuth.
 
