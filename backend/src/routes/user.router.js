@@ -1,7 +1,6 @@
 import { Router } from "express";
 import {
     register,
-    login,
     logout,
     generateToken,
     changePassword,
@@ -15,7 +14,6 @@ import { upload } from "../middlewares/multer.middleware.js";
 const router = Router();
 
 router.route("/register").post(register);
-router.route("/login").post(login);
 router.route("/generate-token").get(generateToken);
 
 router.use(verifyJWT);

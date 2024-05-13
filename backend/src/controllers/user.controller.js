@@ -4,11 +4,10 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
 import { Order } from "../models/order.model.js";
 import { isValidObjectId } from "mongoose";
-import { uploadOnCloudinary, removeOnCloudinary } from "../utils/cloudinary.js";
 import jwt from "jsonwebtoken";
 
 // Generate New Access/Refresh Token
-const createToken = async (userId) => {
+export const createToken = async (userId) => {
     try {
         const user = await User.findById(userId);
 
@@ -79,15 +78,8 @@ const register = asyncHandler(async (req, res, _) => {
 });
 
 const login = asyncHandler(async (req, res, _) => {
+    const { email, password } = req.body;
     try {
-        const { email, password } = req.body;
-        if (!password && !email) {
-            return res
-                .status(401)
-                .json(
-                    new ApiResponse(400, null, "Email or password is required")
-                );
-        }
         const user = await User.findOne({ email });
         if (!user) {
             return res
@@ -105,10 +97,20 @@ const login = asyncHandler(async (req, res, _) => {
         const loggedInUser = await User.findById(user._id).select(
             "-password -refreshToken"
         );
+        const twoDays = 2 * 24 * 60 * 60 * 1000;
+
         return res
             .status(200)
-            .cookie("refreshToken", refreshToken, { httpOnly: true })
-            .cookie("accessToken", accessToken, { httpOnly: true })
+            .cookie("refreshToken", refreshToken, {
+                maxAge: twoDays,
+                httpOnly: true,
+                secure: true,
+            })
+            .cookie("accessToken", accessToken, {
+                maxAge: twoDays,
+                httpOnly: true,
+                secure: true,
+            })
             .json(
                 new ApiResponse(
                     200,
@@ -309,7 +311,6 @@ const getUserOrderHistory = asyncHandler(async (req, res, _) => {
 
 export {
     register,
-    login,
     logout,
     generateToken,
     changePassword,
