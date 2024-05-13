@@ -1,49 +1,73 @@
-import React from 'react';
-import { instance, logo } from '../../utils';
-import { useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { instance, toasts, Inputs } from '../../utils';
+import { clearCart } from '../../redux/cartSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 
 const Payment = () => {
+    const [loading, setLoading] = useState(false);
     const carts = useSelector((state) => state.cart.carts);
-    const { email, shipping } = useSelector((state) => state.ui.process);
-    let totals = carts.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const status = useSelector((state) => state.ui.checkout);
+    const { register, handleSubmit, formState } = useForm();
+    const { errors } = formState;
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const orderPlace = async () => {
-        const getKey = await instance.get('/orders/get-key');
-        const order = await instance.post('/orders/checkout', { amount: totals });
-        console.log(order.data)
-        let options = {
-            key: getKey.data?.key, // Enter the Key ID generated from the Dashboard
-            amount: order?.data?.order?.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-            currency: 'INR',
-            name: shipping.fullName,
-            description: 'Test Transaction',
-            image: logo[1],
-            order_id: order?.data?.order?.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-            callback_url: 'http://localhost:8000/api/v1/orders/payment-verification',
-            prefill: {
-                name: shipping.fullName,
-                email: email,
-                contact: '7719971779',
-            },
-            notes: {
-                address: `${shipping.address}, ${shipping.city}, ${shipping.state}, ${shipping.postcode}`,
-            },
-            theme: {
-                color: '#121212',
-            },
-        };
-        console.log(options)
-        const rzp1 = new window.Razorpay(options);
-        rzp1.open();
+        try {
+            setLoading(true);
+            const totals = carts.reduce((acc, item) => acc + item.price * item.quantity, 0);
+            const { data } = await instance.post('/orders/checkout', { totals });
+            dispatch(clearCart());
+            toasts({ message: 'Your Order Successful' });
+            navigate(`/order/success?refrence=${data.newOrder._id}`);
+        } catch (error) {
+            toasts({ type: false, message: 'Your Order Failed' });
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-        <div>
-            <h2 className='font-semibold mb-4'>Payment Method</h2>
-            <p>You will be redirect to razorpay after you click</p>
-            <button onClick={orderPlace} className='bg-gray-800 hover:bg-gray-700 text-white px-14 py-2 mt-4 rounded'>
-                Continue to Pay
-            </button>
+        <div className='p-4 shadow-lg flex flex-col sm:flex-row gap-5 items-start'>
+            <span className='w-[40px] h-[40px] flex items-center justify-center text-lg font-medium rounded-full text-white bg-gray-800'>
+                3
+            </span>
+            <div className='space-y-4'>
+                <h2 className='text-xl font-medium'>Payment Method</h2>
+                {status === 'payment' && (
+                    <form onSubmit={handleSubmit(orderPlace)}>
+                        <Inputs
+                            defaultValue='5105 1051 0510 5100'
+                            label='Cart Number'
+                            {...register('cartNumber', { required: true })}
+                        />
+                        <div className='sm:flex gap-5'>
+                            <Inputs
+                                defaultValue='11/28'
+                                label='Expire Date'
+                                error={errors.date}
+                                message='Please enter a valid inputs date'
+                                {...register('date', { required: true })}
+                            />
+                            <Inputs
+                                defaultValue='123'
+                                label='CVV'
+                                type='password'
+                                error={errors.date}
+                                message='Please enter a valid inputs CVV'
+                                {...register('cvv', { required: true })}
+                            />
+                        </div>
+                        <Inputs
+                            type='submit'
+                            value={loading ? 'Loading...' : 'Pay Order'}
+                            className='bg-gray-800 text-white cursor-pointer hover:bg-gray-600'
+                        />
+                    </form>
+                )}
+            </div>
         </div>
     );
 };
