@@ -97,27 +97,24 @@ const login = asyncHandler(async (req, res, _) => {
         const loggedInUser = await User.findById(user._id).select(
             "-password -refreshToken"
         );
-        const twoDays = 2 * 24 * 60 * 60 * 1000;
+
+        const payload = {
+            maxAge: 2 * 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            secure: true,
+        };
 
         return res
             .status(200)
-            .cookie("refreshToken", refreshToken, {
-                maxAge: twoDays,
-                httpOnly: true,
-                secure: true,
-            })
-            .cookie("accessToken", accessToken, {
-                maxAge: twoDays,
-                httpOnly: true,
-                secure: true,
-            })
-            .json(
-                new ApiResponse(
-                    200,
-                    { loggedInUser, accessToken, refreshToken },
-                    "User :: Logged In"
-                )
-            );
+            .cookie("refreshToken", refreshToken, payload)
+            .cookie("accessToken", accessToken, payload)
+            .json({
+                statusCode: 200,
+                loggedInUser,
+                accessToken,
+                refreshToken,
+                message: "User :: Logged In",
+            });
     } catch (error) {
         return res.status(500).json(new ApiResponse(500, null, error.message));
     }
@@ -316,5 +313,6 @@ export {
     changePassword,
     getCurrentUser,
     updateUser,
+    login,
     getUserOrderHistory,
 };

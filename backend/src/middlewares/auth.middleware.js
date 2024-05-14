@@ -25,6 +25,6 @@ export const verifyJWT = async (req, res, next) => {
         req.user = user;
         next();
     } catch (error) {
-        console.log( 500, error?.message || "Authentication user");
+        console.log(500, error?.message || "Authentication user");
     }
 };
