@@ -31,18 +31,12 @@ app.use("/api/v1/carts", cartRoute);
 app.use("/api/v1/orders", orderRoute);
 app.use("/api/v1/address", addressRoute);
 
-app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-    res.setHeader(
-        "Access-Control-Allow-Headers",
-        "Content-Type, Authorization"
-    );
-    next();
+
+app.get("*", (req, res, next) => {
+    res.status(200).json({
+        message: "bad request",
+    });
 });
 
-app.get("/api/v1", (req, res) => {
-    res.send("<h3>Hello World</h3> <br/> <h1>Home Page!</h1>");
-});
 
 export { app };
