@@ -4,7 +4,12 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
-app.use(cors({ origin: process.env.CORS_ORIGIN, credentials: true }));
+app.use(
+    cors({
+        origin: ["https://full-stack-ecommerce-app-page.vercel.app", "*"],
+        credentials: true,
+    })
+);
 
 app.use(express.json({ limit: "16kb" }));
 
@@ -31,12 +36,10 @@ app.use("/api/v1/carts", cartRoute);
 app.use("/api/v1/orders", orderRoute);
 app.use("/api/v1/address", addressRoute);
 
-
 app.get("*", (req, res, next) => {
     res.status(200).json({
         message: "bad request",
     });
 });
-
 
 export { app };
