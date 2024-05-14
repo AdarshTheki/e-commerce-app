@@ -4,7 +4,16 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
-app.use(cors({ origin: process.env.CORS_ORIGIN, credentials: true }));
+app.use(
+    cors({
+        origin: [
+            "https://full-stack-ecommerce-app-page.vercel.app",
+            "http://localhost:5173",
+            process.env.CORS_ORIGIN,
+        ],
+        credentials: true,
+    })
+);
 
 app.use(express.json({ limit: "16kb" }));
 
@@ -15,7 +24,6 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 // http://localhost:8000/api/v1/users
-
 
 import { User } from "./models/user.model.js";
 
@@ -75,8 +83,6 @@ app.post("/api/v1/users/login", async (req, res) => {
         console.log(500, error.message);
     }
 });
-
-
 
 // import files
 import healthCheckRoute from "./routes/healthCheck.router.js";
