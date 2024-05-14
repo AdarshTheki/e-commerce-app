@@ -6,7 +6,13 @@ const app = express();
 
 app.use(
     cors({
-        origin: ["https://full-stack-ecommerce-app-page.vercel.app", "*"],
+        origin: [
+            "https://full-stack-ecommerce-app-page.vercel.app",
+            "http://localhost:5173",
+            "http://localhost:8000",
+            "http://localhost:3000",
+            "*"
+        ],
         credentials: true,
     })
 );
