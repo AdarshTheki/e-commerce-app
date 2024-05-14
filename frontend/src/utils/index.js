@@ -60,18 +60,35 @@ const toasts = ({ type = true, message = '' }) => {
     });
 };
 
+const cookies = document.cookie.split(';').map(cookie => cookie.trim());
+const accessTokenCookie = cookies.find((cookie) => cookie.startsWith('accessToken='));
+
 const instance = axios.create({
-    baseURL: 'http://localhost:8000/api/v1',
+    baseURL: 'http://localhost:8000/api/v1', // Replace with your API base URL
     headers: {
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjMzNWY3YTVjY2M5NGRiMzllMmE4NzkiLCJlbWFpbCI6ImFkYXJzaHZlcm1hNTQ5QGdtYWlsLmNvbSIsInVzZXJuYW1lIjoiYWRhcnNodmVybWE1NDkiLCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3MTQ5OTE4NDEsImV4cCI6MTcxNTE2NDY0MX0.7OMAIvKLkSpiy-fhyNo3hJhs02TS6yYpPcqB6jQVsYg`,
+        Authorization: `Bearer ${accessTokenCookie.split('=')[1] || ''}`,
     },
 });
+
+function loadScript(src) {
+    return new Promise((resolve) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = () => {
+            resolve(true);
+        };
+        script.onerror = () => {
+            resolve(false);
+        };
+        document.body.appendChild(script);
+    });
+}
 
 // components
 export { Button, Search, Inputs, Navigation, Categories, Slider, Loader };
 
 // functions
-export { formatPrice, toasts, instance };
+export { formatPrice, toasts, instance, loadScript };
 
 // Objects
 export { sliderImgs, status, logo };

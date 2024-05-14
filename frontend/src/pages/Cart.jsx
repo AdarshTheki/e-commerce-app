@@ -25,9 +25,9 @@ const Cart = () => {
         }
     };
 
-    let totals = carts.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    let totals = carts?.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
-    if (carts.length === 0) return <CartEmpty />;
+    if (!carts || carts?.length === 0) return <CartEmpty />;
 
     return (
         <div>
@@ -52,7 +52,9 @@ const Cart = () => {
             )}
 
             <div className='py-5 mx-auto w-fit'>
-                <NavLink to='/checkout' className='px-5 py-2 bg-green-600 text-white font-semibold hover:bg-green-800'>
+                <NavLink
+                    to='/checkout'
+                    className='px-5 py-2 bg-green-600 text-white font-semibold hover:bg-green-800'>
                     Checkout process
                 </NavLink>
             </div>

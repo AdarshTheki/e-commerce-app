@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
-
 import { instance, Inputs, toasts } from '../../utils';
-import { setUser } from '../../redux/authSlice';
 import { setMode } from '../../redux/uiSlice';
 
 const Login = () => {
@@ -15,16 +13,13 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const [passwordShow, setPasswordShow] = useState(false);
 
-    const submitForm = async (data) => {
-        setLoading(true);
+    const submitForm = async (userData) => {
         try {
-            const result = await instance.post('/users/login', data);
-            if (result.data) {
-                console.log(result.data.data);
-                dispatch(setUser(result.data.data.loggedInUser));
-                toasts({ message: 'Login successful' });
-                dispatch(setMode('user-detail'));
-            }
+            setLoading(true);
+            const { data } = await instance.post('/users/login', userData);
+            document.cookie = `accessToken=${data?.accessToken}; path=/`;
+            document.cookie = `refreshToken=${data?.refreshToken}; path=/`;
+            window.location.href = '/';
         } catch (error) {
             toasts({ type: false, message: error?.message || 'Login failed' });
         } finally {

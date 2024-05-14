@@ -15,6 +15,7 @@ const User = () => {
             toasts({ message: 'user logout successfully' });
             dispatch(setLogout());
             dispatch(setMode(''));
+            document.cookie = 'accessToken='
         } catch (error) {
             toasts({ type: false, message: 'User logout something wrong' });
         }

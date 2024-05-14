@@ -3,17 +3,21 @@
    - `username`: String
    - `email`: String
    - `password`: String (hashed)
-   - `role`: String (customer, admin, etc.)
-   - Other fields related to user profile and preferences
+   - `role`: String (customer, admin)
+   - `refreshToken`: String (hashed) 
 
 2. **Product Model**:
    - `id`: ObjectId
-   - `name`: String
+   - `title`: String
    - `description`: String
    - `price`: Number
-   - `category`: String (or reference to a Category model)
+   - `category`: String 
+   - `brand`: String 
+   - `discount`: Number 
+   - `rating`: Number 
+   - `stock`: Number 
+   - `thumbnail`: String 
    - `imageUrls`: Array of Strings (URLs)
-   - Other fields related to product details and inventory management
 
 3. **Category Model** (optional, if you have product categories):
    - `id`: ObjectId

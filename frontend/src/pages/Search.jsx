@@ -28,7 +28,7 @@ const Search = () => {
         fetchParams();
     }, [searchTerm]);
 
-    if (data.length === 0) {
+    if (!data || data.length === 0) {
         return (
             <div className='bg-white p-4 h-[300px] flex items-center justify-center flex-col'>
                 <p className='text-gray-800 font-medium capitalize mb-5 text-2xl'>

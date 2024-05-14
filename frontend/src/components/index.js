@@ -6,5 +6,20 @@ import Authenticate from './Authenticate/Authenticate';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
+import Customer from './Checkout/Customer';
+import Delivery from './Checkout/Delivery';
+import Payment from './Checkout/Payment';
 
-export { Authenticate, CartEmpty, Footer, CartItem, Header, ProductDetail, ProductList, Sidebar };
+export {
+    Authenticate,
+    CartEmpty,
+    Payment,
+    Footer,
+    Delivery,
+    Customer,
+    CartItem,
+    Header,
+    ProductDetail,
+    ProductList,
+    Sidebar,
+};
