@@ -48,12 +48,12 @@ import cartRoute from "./routes/cart.router.js";
 import orderRoute from "./routes/order.router.js";
 import addressRoute from "./routes/address.router.js";
 
-app.use("/api/v1/healthcheck", healthCheckRoute);
-app.use("/api/v1/users", userRoute);
-app.use("/api/v1/products", productRoute);
-app.use("/api/v1/carts", cartRoute);
-app.use("/api/v1/orders", orderRoute);
-app.use("/api/v1/address", addressRoute);
+app.use("/healthcheck", healthCheckRoute);
+app.use("/users", userRoute);
+app.use("/products", productRoute);
+app.use("/carts", cartRoute);
+app.use("/orders", orderRoute);
+app.use("/address", addressRoute);
 
 app.get("*", (req, res, next) => {
     res.status(200).json({
