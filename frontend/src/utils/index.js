@@ -64,7 +64,8 @@ const cookies = document.cookie.split(';').map(cookie => cookie.trim());
 const accessTokenCookie = cookies.find((cookie) => cookie.startsWith('accessToken='));
 
 const instance = axios.create({
-    baseURL: 'http://localhost:8000/api/v1', // Replace with your API base URL
+    // baseURL: 'http://localhost:8000/api/v1', // Replace with your API base URL
+    baseURL: 'https://full-stack-ecommerce-api-six.vercel.app/api/v1', // Replace with your API base URL
     headers: {
         Authorization: `Bearer ${accessTokenCookie.split('=')[1] || ''}`,
     },
