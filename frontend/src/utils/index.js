@@ -60,14 +60,22 @@ const toasts = ({ type = true, message = '' }) => {
     });
 };
 
-const cookies = document.cookie.split(';').map(cookie => cookie.trim());
-const accessTokenCookie = cookies.find((cookie) => cookie.startsWith('accessToken='));
+const getCookie = (name) => {
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + '=')) {
+            return cookie.substring(name.length + 1);
+        }
+    }
+    return '';
+};
 
 const instance = axios.create({
     // baseURL: 'http://localhost:8000/api/v1', // Replace with your API base URL
     baseURL: 'https://full-stack-ecommerce-api-six.vercel.app/api/v1', // Replace with your API base URL
     headers: {
-        Authorization: `Bearer ${accessTokenCookie.split('=')[1] || ''}`,
+        Authorization: `Bearer ${getCookie('accessToken')}`,
     },
 });
 
