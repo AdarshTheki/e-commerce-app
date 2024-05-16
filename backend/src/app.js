@@ -4,18 +4,17 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
-app.use(
-    cors({
-        origin: [
-            "https://full-stack-ecommerce-app-page.vercel.app",
-            "http://localhost:5173",
-            "http://localhost:8000",
-            "http://localhost:3000",
-            "*",
-        ],
-        credentials: true,
-    })
-);
+app.use(cors({ origin: process.env.CORS_ORIGIN, credentials: true }));
+
+// watch It
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept"
+    );
+    next();
+});
 
 app.use(express.json({ limit: "16kb" }));
 
@@ -24,19 +23,6 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 
 app.use(cookieParser());
-
-app.use((req, res, next) => {
-    res.setHeader(
-        "Access-Control-Allow-Origin",
-        "https://full-stack-ecommerce-app-page.vercel.app"
-    );
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-    res.setHeader(
-        "Access-Control-Allow-Headers",
-        "Content-Type, Authorization"
-    );
-    next();
-});
 
 // http://localhost:8000/api/v1/users
 
@@ -48,17 +34,17 @@ import cartRoute from "./routes/cart.router.js";
 import orderRoute from "./routes/order.router.js";
 import addressRoute from "./routes/address.router.js";
 
-app.use("/healthcheck", healthCheckRoute);
-app.use("/users", userRoute);
-app.use("/products", productRoute);
-app.use("/carts", cartRoute);
-app.use("/orders", orderRoute);
-app.use("/address", addressRoute);
+app.use("/api/v1/healthcheck", healthCheckRoute);
+app.use("/api/v1/auth", userRoute);
+app.use("/api/v1/products", productRoute);
+app.use("/api/v1/carts", cartRoute);
+app.use("/api/v1/orders", orderRoute);
+app.use("/api/v1/address", addressRoute);
 
 app.get("*", (req, res, next) => {
-    res.status(200).json({
-        message: "bad request",
-    });
+    res.status(200).send(
+        "<h2>Say goodbye to hours of manual debugging</h2> <h3>- streamline your development process with our API Bad Request Finder today.</h3>"
+    );
 });
 
 export { app };
