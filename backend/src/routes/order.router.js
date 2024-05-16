@@ -1,22 +1,15 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import {
-    payOrder,
-    paymentVerification,
-    getKey,
-    getAllOrder,
-    getSingleOrder,
+    createOrder,
+    getUserOrder
 } from "../controllers/order.controller.js";
 
 const router = Router();
 
 router.use(verifyJWT);
 
-router.route("/get-key").get(getKey);
-router.route("/checkout").post(payOrder);
-router.route("/user/order").get(getAllOrder);
-router.route("/user/:id").get(getSingleOrder);
-
-router.route("/payment-verification").post(paymentVerification);
+router.route("/create").post(createOrder);
+router.route("/user").get(getUserOrder);
 
 export default router;
