@@ -1,11 +1,12 @@
 import mongoose, { Schema } from "mongoose";
-import { cartItemSchema } from "./cart.model.js";
 
 const orderSchema = new Schema(
     {
         user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-        products: [cartItemSchema],
-        totals: Number,
+        totalPrice: { type: Number, required: true },
+        discountedPrice: { type: Number, required: true },
+        totalProducts: { type: Number, required: true },
+        totalQuantity: { type: Number, required: true },
         status: {
             type: String,
             enum: ["pending", "success"],

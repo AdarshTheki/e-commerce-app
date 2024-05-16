@@ -9,7 +9,7 @@ const productSchema = new Schema({
     discount: { type: Number, required: true },
     rating: { type: Number, required: true },
     stock: { type: Number, required: true },
-    thumbnail: { type: String, required: true },
+    thumbnail: { type: String },
     images: [{ type: String }], // Array of image URLs
 });
 
