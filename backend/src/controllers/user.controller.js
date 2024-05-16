@@ -24,35 +24,19 @@ export const createToken = async (userId) => {
     }
 };
 
-const register = asyncHandler(async (req, res, _) => {
+const signUp = asyncHandler(async (req, res, _) => {
     const { email, password, username, role } = req.body;
     try {
         // Validate that all fields are not empty
         if ([email, password, username].some((field) => field?.trim() === "")) {
-            return res
-                .status(401)
-                .json(
-                    new ApiResponse(
-                        401,
-                        null,
-                        "user :: All fields are required"
-                    )
-                );
+            throw new ApiError(401, "user :: All fields are required");
         }
         // Check if a user with the same username or email already exists
         const exitsUser = await User.findOne({
             $or: [{ username }, { email }],
         });
         if (exitsUser) {
-            return res
-                .status(401)
-                .json(
-                    new ApiResponse(
-                        401,
-                        null,
-                        "User :: Email or Username already exists"
-                    )
-                );
+            throw new ApiError(401, "User :: Email or Username already exists");
         }
         // Create a new user object and save it to the database
         const user = await User.create({
@@ -65,36 +49,30 @@ const register = asyncHandler(async (req, res, _) => {
             "-password -refreshToken"
         );
         if (!createdUser) {
-            return res
-                .status(403)
-                .json(new ApiResponse(403, null, "Created new user failed"));
+            throw new ApiError(403, null, "Created new user failed");
         }
-        return res
-            .status(201)
-            .json(new ApiResponse(200, {}, "Create New User successfully"));
+        return res.status(200).json(createdUser);
     } catch (error) {
-        return res.status(500).json(new ApiResponse(500, null, error.message));
+        throw new ApiError(500, error.message);
     }
 });
 
-const login = asyncHandler(async (req, res, _) => {
+const signIn = asyncHandler(async (req, res, _) => {
     const { email, password } = req.body;
     try {
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res
-                .status(401)
-                .json(new ApiResponse(404, null, "user does not exist"));
+        const tempUser = await User.findOne({ email });
+        if (!tempUser) {
+            throw new ApiError(404, "user does not exist");
         }
-        const isPasswordValid = await user.isPasswordCorrect(password);
-        if (!isPasswordValid) {
-            return res
-                .status(401)
-                .json(new ApiResponse(401, null, "Invalid user credentials"));
-        }
-        const { accessToken, refreshToken } = await createToken(user._id);
 
-        const loggedInUser = await User.findById(user._id).select(
+        const isPasswordValid = await tempUser.isPasswordCorrect(password);
+        if (!isPasswordValid) {
+            throw new ApiError(401, null, "Invalid user credentials");
+        }
+
+        const { accessToken, refreshToken } = await createToken(tempUser._id);
+
+        const user = await User.findById(tempUser._id).select(
             "-password -refreshToken"
         );
 
@@ -108,15 +86,9 @@ const login = asyncHandler(async (req, res, _) => {
             .status(200)
             .cookie("refreshToken", refreshToken, payload)
             .cookie("accessToken", accessToken, payload)
-            .json({
-                statusCode: 200,
-                loggedInUser,
-                accessToken,
-                refreshToken,
-                message: "User :: Logged In",
-            });
+            .json({ user, accessToken, refreshToken });
     } catch (error) {
-        return res.status(500).json(new ApiResponse(500, null, error.message));
+        throw new ApiError(500, null, error.message);
     }
 });
 
@@ -145,51 +117,37 @@ const logout = asyncHandler(async (req, res, _) => {
     }
 });
 
-const generateToken = asyncHandler(async (req, res, _) => {
+const getRefreshToken = asyncHandler(async (req, res, _) => {
     try {
         const incomingRefreshToken =
             req.cookies.refreshToken || req.body.refreshToken;
         if (!incomingRefreshToken) {
-            return res
-                .status(401)
-                .json(
-                    new ApiError(
-                        401,
-                        "User :: Un-Authorize Access Token Request"
-                    )
-                );
+            throw new ApiError(401, "Un-Authorize Access Token Request");
         }
+
         const decodedToken = jwt.verify(
             incomingRefreshToken,
             process.env.REFRESH_TOKEN_SECRET
         );
+
         const user = await User.findById(decodedToken?._id);
         if (!user) {
-            return res
-                .status(401)
-                .json(
-                    new ApiResponse(401, null, "User :: Invalid Refresh Token")
-                );
+            throw new ApiError(401, "User :: Invalid Refresh Token");
         }
+
         if (incomingRefreshToken !== user?.refreshToken) {
-            return res
-                .status(401)
-                .json(new ApiResponse(401, null, "User :: Token is Expired"));
+            throw new ApiError(401, "User :: Token is Expired");
         }
+
         const { accessToken, refreshToken } = await createToken(user._id);
+
         return res
             .status(200)
             .cookie("accessToken", accessToken, { httpOnly: true })
             .cookie("refreshToken", refreshToken, { httpOnly: true })
-            .json(
-                new ApiResponse(
-                    200,
-                    { accessToken, refreshToken },
-                    "User :: Access Token"
-                )
-            );
+            .json({ user, accessToken, refreshToken });
     } catch (error) {
-        return res.status(500).json(new ApiResponse(500, null, error.message));
+        throw new ApiError(500, error.message);
     }
 });
 
@@ -198,75 +156,59 @@ const changePassword = asyncHandler(async (req, res, _) => {
     try {
         const user = await User.findOne({ email: email });
         if (!user) {
-            return res
-                .status(401)
-                .json(
-                    new ApiResponse(401, null, "User :: User does not exists")
-                );
+            throw new ApiError(401, "User :: User does not exists");
         }
 
         const isPasswordValid = await user.isPasswordCorrect(oldPassword);
 
         if (!isPasswordValid) {
-            return res
-                .status(401)
-                .json(new ApiResponse(401, null, "user :: Password invalid"));
+            throw new ApiError(401, "user :: Password invalid");
         }
 
         user.password = newPassword;
         await user.save({ validateBeforeSave: false });
 
-        return res
-            .status(200)
-            .json(new ApiResponse(200, {}, "Password Change successfully"));
+        return res.status(200).json(user);
     } catch (error) {
-        return res.status(500).json(new ApiResponse(500, null, error?.message));
+        throw new ApiError(500, error?.message);
     }
 });
 
-const getCurrentUser = asyncHandler(async (req, res, _) => {
+const getMe = asyncHandler(async (req, res, _) => {
     if (!req.user) {
-        return res
-            .status(401)
-            .json(new ApiResponse(401, null, "User :: Current User NOt Found"));
+        throw new ApiError(401, "User :: Current User NOt Found");
     }
-    return res
-        .status(200)
-        .json(new ApiResponse(200, req.user, "User :: Get Current User"));
+
+    return res.status(200).json(req.user);
 });
 
-const updateUser = asyncHandler(async (req, res, _) => {
+const updateMe = asyncHandler(async (req, res, _) => {
     const { username, role } = req.body;
     const userId = req.user?._id;
     try {
         const user = await User.findOne({ _id: userId });
+
         if (!user) {
-            return res
-                .status(404)
-                .json(
-                    new ApiResponse(404, null, "user :: user does not exists")
-                );
+            throw new ApiError("user :: user does not exists");
         }
+
         if (username && user.username !== username) {
             user.username = username;
+
             if (["customer", "admin"].includes(role)) {
                 user.role = role;
             }
+
             await user.save({ validateBeforeSave: false });
-            return res
-                .status(200)
-                .json(new ApiResponse(200, {}, "User :: Updated successfully"));
-        } else {
-            return res
-                .status(200)
-                .json(new ApiResponse(200, {}, "User :: Not Updated"));
+
+            return res.status(200).json(user);
         }
     } catch (error) {
         return res.status(500).json(new ApiResponse(500, null, error.message));
     }
 });
 
-const getUserOrderHistory = asyncHandler(async (req, res, _) => {
+const getMeOrder = asyncHandler(async (req, res, _) => {
     try {
         const userId = req.user._id;
         const orderHistory = await Order.aggregate([
@@ -282,37 +224,22 @@ const getUserOrderHistory = asyncHandler(async (req, res, _) => {
         ]);
 
         if (orderHistory.length === 0) {
-            return res
-                .status(401)
-                .json(
-                    new ApiResponse(
-                        401,
-                        {},
-                        "user :: order history does not exists"
-                    )
-                );
+            throw new ApiError(401, "user :: order history does not exists");
         }
-        return res
-            .status(200)
-            .json(
-                new ApiResponse(
-                    200,
-                    orderHistory,
-                    "User :: Get user order history"
-                )
-            );
+        
+        return res.status(200).json(orderHistory);
     } catch (error) {
-        return res.status(500).json(new ApiResponse(500, null, error.message));
+        throw new ApiError(500, error.message);
     }
 });
 
 export {
-    register,
+    signUp,
+    signIn,
+    getRefreshToken,
+    getMe,
+    getMeOrder,
     logout,
-    generateToken,
     changePassword,
-    getCurrentUser,
-    updateUser,
-    login,
-    getUserOrderHistory,
+    updateMe,
 };

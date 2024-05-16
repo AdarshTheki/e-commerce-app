@@ -7,30 +7,69 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const uploadOnCloudinary = async (localFilePath) => {
+const uploadMultiImag = async (images = []) => {
     try {
-        if (!localFilePath) return null;
-        const response = await cloudinary.uploader.upload(localFilePath, {
-            resource_type: "auto",
-        });
-        fs.unlinkSync(localFilePath);
-        return response;
+        if (images.length === 0) return [];
+        const uploadPromises = images.map((file) =>
+            cloudinary.uploader.upload(file.path, { resource_type: "image" })
+        );
+        const urls = await Promise.all(uploadPromises);
+        const result = urls.map((url) => url.secure_url);
+        images.map((img) => fs.unlinkSync(img.path));
+        return result;
     } catch (error) {
-        fs.unlinkSync(localFilePath);
-        return null;
+        images.map((img) => fs.unlinkSync(img.path));
+        return [];
     }
 };
 
-const removeOnCloudinary = async (publicId) => {
+const uploadImage = async (localFilePath) => {
     try {
-        if (!publicId) return null;
-        const response = await cloudinary.uploader.destroy(publicId, {
-            resource_type: "auto",
+        if (!localFilePath) return "";
+
+        const res = await cloudinary.uploader.upload(localFilePath, {
+            resource_type: "image",
         });
-        return response;
+        fs.unlinkSync(localFilePath);
+        return res.secure_url;
     } catch (error) {
-        return null;
+        fs.unlinkSync(localFilePath);
+        return "";
     }
 };
 
-export { uploadOnCloudinary, removeOnCloudinary };
+const removeImage = async (publicId) => {
+    try {
+        if (!publicId) return "";
+
+        await cloudinary.uploader.destroy(publicId, {
+            resource_type: "image",
+        });
+        return true;
+    } catch (err) {
+        return "";
+    }
+};
+
+const removeMultiImage = async (images = []) => {
+    try {
+        if (images.length === 0) return false;
+
+        const publicIds = images.map((url) => {
+            const publicId = url.split("/").pop().split(".")[0];
+            return publicId;
+        });
+
+        const removePromises = publicIds.map((public_id) =>
+            cloudinary.uploader.destroy(public_id, { resource_type: "image" })
+        );
+
+        await Promise.all(removePromises);
+
+        return true;
+    } catch (error) {
+        return false;
+    }
+};
+
+export { uploadImage, removeImage, uploadMultiImag, removeMultiImage };

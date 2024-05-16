@@ -1,4 +1,5 @@
 import { User } from "../models/user.model.js";
+import { ApiError } from "../utils/ApiError.js";
 import jwt from "jsonwebtoken";
 
 export const verifyJWT = async (req, res, next) => {
@@ -9,7 +10,7 @@ export const verifyJWT = async (req, res, next) => {
             "";
 
         if (!token) {
-            console.log(401, "Un-Authorization Request!");
+            throw new ApiError(401, "Un-Authorization Request!");
         }
 
         const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
@@ -19,12 +20,12 @@ export const verifyJWT = async (req, res, next) => {
         );
 
         if (!user) {
-            console.log(401, "Invalid Access Token ! Please Login User");
+            throw new ApiError(401, "Invalid Access Token ! Please Login User");
         }
 
         req.user = user;
         next();
     } catch (error) {
-        console.log(500, error?.message || "Authentication user");
+        throw new ApiError(500, error?.message || "Authentication user");
     }
 };

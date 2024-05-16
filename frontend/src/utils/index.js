@@ -72,8 +72,8 @@ const getCookie = (name) => {
 };
 
 const instance = axios.create({
-    // baseURL: 'http://localhost:8000/api/v1', // Replace with your API base URL
-    baseURL: 'https://full-stack-ecommerce-api-pi.vercel.app', // Replace with your API base URL
+    baseURL: 'http://localhost:8000/api/v1', // Replace with your API base URL
+    // baseURL: 'https://full-stack-ecommerce-api-pi.vercel.app', // Replace with your API base URL
     headers: {
         Authorization: `Bearer ${getCookie('accessToken')}`,
     },
