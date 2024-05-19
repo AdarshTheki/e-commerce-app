@@ -36,7 +36,7 @@ const createOrder = asyncHandler(async (req, res) => {
 
         await Cart.deleteMany({ user: req.user._id });
 
-        return res.status(200).json({ message: "Create new Order Success" });
+        return res.status(200).json(newOrder);
     } catch (error) {
         res.status(500).json({ message: error?.message });
     }

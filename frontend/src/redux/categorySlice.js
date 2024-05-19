@@ -44,14 +44,14 @@ const categorySlice = createSlice({
 
 export const fetchCategories = createAsyncThunk('categories/fetch', async () => {
     const response = await instance.get('/products/categories');
-    return response.data.data;
+    return response.data;
 });
 
 export const fetchProductsOfCategory = createAsyncThunk(
     'category-products/fetch',
     async (category) => {
         const response = await instance.get(`/products/category/${category}`);
-        return response.data.data;
+        return response.data;
     }
 );
 

@@ -1,9 +1,11 @@
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-import mobile_3 from '../assets/mobile3.jpg';
-import mobile_4 from '../assets/laptop.jpg';
-import mobile_5 from '../assets/laptop2.jpg';
+import banner1 from '../assets/banner_1.jpeg'
+import banner2 from '../assets/banner_2.png'
+import banner3 from '../assets/banner_3.jpeg'
+import banner4 from '../assets/banner_4.jpeg'
+import banner5 from '../assets/banner_5.jpeg'
 
 import logoPng from '../assets/logo.png';
 import logoWebp from '../assets/logo.webp';
@@ -16,7 +18,7 @@ import Categories from './Categories';
 import Loader from './Loader';
 import Slider from './Slider';
 
-const sliderImgs = [mobile_3, mobile_4, mobile_5];
+const bannerImgs = [banner1, banner2, banner3, banner4, banner5]
 const logo = [logoPng, logoWebp];
 
 const status = Object.freeze({
@@ -72,8 +74,10 @@ const getCookie = (name) => {
 };
 
 const instance = axios.create({
-    baseURL: 'http://localhost:8000/api/v1', // Replace with your API base URL
-    // baseURL: 'https://full-stack-ecommerce-api-pi.vercel.app', // Replace with your API base URL
+    // baseURL: 'http://localhost:8000/api/v1',
+    // baseURL: 'https://full-stack-ecommerce-api-pi.vercel.app',
+    // baseURL:'https://full-stack-ecommerce-app-sq9o.onrender.com/api/v1',
+    baseURL: '/url2/api/v1',
     headers: {
         Authorization: `Bearer ${getCookie('accessToken')}`,
     },
@@ -94,10 +98,10 @@ function loadScript(src) {
 }
 
 // components
-export { Button, Search, Inputs, Navigation, Categories, Slider, Loader };
+export { Button, Search, Inputs, Navigation, Categories, Slider, Loader,  };
 
 // functions
 export { formatPrice, toasts, instance, loadScript };
 
 // Objects
-export { sliderImgs, status, logo };
+export {bannerImgs,  status, logo };
