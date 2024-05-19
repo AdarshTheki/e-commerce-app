@@ -16,7 +16,8 @@ const Login = () => {
     const submitForm = async (userData) => {
         try {
             setLoading(true);
-            const { data } = await instance.post('/users/login', userData);
+            const { data } = await instance.post('/auth/sign-in', userData);
+            console.log(data)
             document.cookie = `accessToken=${data?.accessToken}; path=/`;
             document.cookie = `refreshToken=${data?.refreshToken}; path=/`;
             window.location.href = '/';
@@ -33,6 +34,7 @@ const Login = () => {
             <form onSubmit={handleSubmit(submitForm)} className='space-y-4'>
                 <div>
                     <Inputs
+                        defaultValue='demouser@gmail.com'
                         label='Email:'
                         type='email'
                         placeholder='Enter your email...'
@@ -48,6 +50,7 @@ const Login = () => {
                 </div>
                 <div className='relative'>
                     <Inputs
+                        defaultValue='demouser@12'
                         label='Password:'
                         type={passwordShow ? 'text' : 'password'}
                         placeholder='Enter your password...'

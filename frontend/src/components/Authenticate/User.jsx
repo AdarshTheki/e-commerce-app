@@ -1,17 +1,17 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getUser, setLogout } from '../../redux/authSlice';
+import { setLogout } from '../../redux/authSlice';
 import { setMode } from '../../redux/uiSlice';
 import { instance, toasts } from '../../utils';
 
 const User = () => {
-    const user = useSelector(getUser);
+    const user = useSelector(state => state.auth.user);
     const dispatch = useDispatch();
 
     const logoutHandler = async () => {
         try {
-            await instance.get('/users/logout');
+            await instance.get('/auth/logout');
             toasts({ message: 'user logout successfully' });
             dispatch(setLogout());
             dispatch(setMode(''));

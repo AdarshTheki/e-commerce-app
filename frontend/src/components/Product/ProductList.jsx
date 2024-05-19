@@ -6,14 +6,14 @@ import { formatPrice, status, Loader } from '../../utils';
 
 export default function Container({ checkStatus, name = '', products = [] }) {
     return (
-        <div className='min-h-screen w-full py-10 px-5 bg-slate-200'>
+        <div className='min-h-screen w-full'>
             <h2 className='capitalize text-2xl font-semibold mb-4'>
                 Our {name?.replace('-', ' ')}
             </h2>
             {checkStatus === status?.loading ? (
                 <Loader />
             ) : (
-                <div className='w-full max-w-screen-xl mx-auto relative grid lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 gap-4'>
+                <div className='w-full max-w-screen-xl mx-auto relative grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-4'>
                     {products?.map((product) => {
                         const { price, discount, title, _id, images, brand } = product;
                         let discountPrice = price - price * (discount / 100);
@@ -21,7 +21,7 @@ export default function Container({ checkStatus, name = '', products = [] }) {
                             <NavLink
                                 to={`/product/${_id}`}
                                 key={_id}
-                                className=' bg-white hover:shadow-xl duration-300 relative text-wrap p-4 capitalize rounded-xl flex flex-col'>
+                                className=' bg-white shadow-xl duration-300 relative text-wrap p-4 capitalize rounded-xl flex flex-col'>
                                 <div className='h-[180px] overflow-hidden relative'>
                                     <img
                                         className='mx-auto rounded'

@@ -12,7 +12,7 @@ const ChangePassword = () => {
 
     const onSubmitHandler = async (data) => {
         try {
-            await instance.patch('/users/change-password', data);
+            await instance.patch('/auth/change-password', data);
             toasts({ message: 'You password change successfully' });
             dispatch(setMode(''));
         } catch (error) {

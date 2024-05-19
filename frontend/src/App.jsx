@@ -11,7 +11,6 @@ import {
     Checkout,
     Success,
     OrderHistory,
-    OrderSingle,
 } from './pages';
 
 import { instance, toasts } from './utils';
@@ -24,9 +23,9 @@ const App = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await instance.get('/users/current-user');
-                if (response.data.data) {
-                    dispatch(setUser(response.data.data));
+                const response = await instance.get('/auth/me');
+                if (response.data) {
+                    dispatch(setUser(response.data));
                 }
             } catch (error) {
                 toasts({ type: false, message: 'Get Current User Failed' });
@@ -51,7 +50,6 @@ const App = () => {
                         <Route path='/checkout' element={<Checkout />} />
                         <Route path='/order/success' element={<Success />} />
                         <Route path='/order/history' element={<OrderHistory />} />
-                        <Route path='/order/user/:id' element={<OrderSingle />} />
                     </Route>
                 </Routes>
                 <Footer />

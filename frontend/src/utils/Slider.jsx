@@ -1,25 +1,25 @@
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { sliderImgs } from '.';
 
-const HeaderSlider = () => {
+const HeaderSlider = ({ images = [] }) => {
     let settings = {
         autoplay: true,
         autoplaySpeed: 2000,
-        arrows: false,
+        arrow: true,
         infinite: true,
         speed: 500,
         slidesToShow: 1,
         slidesToScroll: 1,
+        dots: true,
     };
 
     return (
-        <div className='w-full'>
+        <div className='overflow-hidden py-5'>
             <Slider {...settings}>
-                {sliderImgs?.map((item, index) => (
+                {images?.map((item, index) => (
                     <div key={index}>
-                        <img src={item} alt={index} />
+                        <img src={item} alt={index} className=' min-h-[130px]'/>
                     </div>
                 ))}
             </Slider>

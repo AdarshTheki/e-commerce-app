@@ -1,29 +1,33 @@
 import React, { useState } from 'react';
 import { instance, toasts, Inputs } from '../../utils';
-import { clearCart } from '../../redux/cartSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
 const Payment = () => {
     const [loading, setLoading] = useState(false);
-    const carts = useSelector((state) => state.cart.carts);
+    const user = useSelector((state) => state.auth.user);
     const status = useSelector((state) => state.ui.checkout);
+
     const { register, handleSubmit, formState } = useForm();
     const { errors } = formState;
-    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const orderPlace = async () => {
         try {
             setLoading(true);
-            const totals = carts.reduce((acc, item) => acc + item.price * item.quantity, 0);
-            const { data } = await instance.post('/orders/checkout', { totals });
-            dispatch(clearCart());
+            const { data: carts } = await instance.get('/carts/user');
+            const { data } = await instance.post('/orders/create', {
+                totalPrice: carts.totalPrice,
+                discountedPrice: carts.discountedPrice,
+                totalProducts: carts.totalProducts,
+                totalQuantity: carts.totalQuantity,
+                user: user?._id,
+            });
             toasts({ message: 'Your Order Successful' });
-            navigate(`/order/success?refrence=${data.newOrder._id}`);
+            navigate(`/order/success?refrence=${data._id}`);
         } catch (error) {
-            toasts({ type: false, message: 'Your Order Failed' });
+            toasts({ type: false, message: error?.message || 'Your Order Failed' });
         } finally {
             setLoading(false);
         }

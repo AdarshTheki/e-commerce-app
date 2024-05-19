@@ -18,7 +18,7 @@ const Sidebar = () => {
                 <img src={logo[1]} alt='lgo' width={20} />
                 <p className='text-white font-semibold '>ShopUp</p>
             </section>
-            <section className='sm:hidden flex flex-col items-center gap-2'>
+            <section className='sm:hidden py-2 px-2'>
                 <Search />
             </section>
             <section>

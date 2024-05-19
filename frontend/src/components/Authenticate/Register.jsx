@@ -17,7 +17,7 @@ const Register = () => {
     const submitForm = async (data) => {
         setLoading(true);
         try {
-            const result = await instance.post('/users/register', data);
+            const result = await instance.post('/auth/sign-up', data);
             if (result) {
                 toasts({ message: 'Register successfully' });
             }

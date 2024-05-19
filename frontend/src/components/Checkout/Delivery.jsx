@@ -14,7 +14,7 @@ const Delivery = () => {
         const fetchAddress = async () => {
             try {
                 const res = await instance.get('/address');
-                setData(res.data.data);
+                setData(res.data);
             } catch (error) {
                 console.log(error?.message);
             }

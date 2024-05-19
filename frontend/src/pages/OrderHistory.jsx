@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, instance, Loader } from '../utils';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { FaArrowLeftLong } from 'react-icons/fa6';
+import { formatPrice } from '../utils';
 
 const OrderHistory = () => {
     const navigate = useNavigate();
@@ -12,8 +13,8 @@ const OrderHistory = () => {
         const fetchOrders = async () => {
             try {
                 setLoading(true);
-                const response = await instance.get('/orders/user/order');
-                setOrders(response.data.orders);
+                const response = await instance.get('/orders/user');
+                setOrders(response.data);
             } catch (error) {
                 console.log(error);
             } finally {
@@ -51,36 +52,44 @@ const OrderHistory = () => {
                 <div className='overflow-x-auto'>
                     <table className='min-w-full divide-y divide-gray-200'>
                         <thead className='bg-gray-50'>
-                            <tr>
-                                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                            <tr className='text-center'>
+                                <th className='px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider'>
                                     Order ID
                                 </th>
-                                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                                <th className='px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider'>
                                     Date
                                 </th>
-                                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                                <th className='px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                                    Product
+                                </th>
+                                <th className='px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                                    Quantity
+                                </th>
+                                <th className='px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider'>
                                     Total Pay
                                 </th>
-                                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                                <th className='px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider'>
                                     Status
                                 </th>
                             </tr>
                         </thead>
                         <tbody className='bg-white divide-y divide-gray-200 text-xs sm:text-sm lg:text-base'>
                             {orders.map((order) => (
-                                <tr key={order._id}>
-                                    <td className='px-2 py-4 whitespace-nowrap'>
-                                        <NavLink
-                                            to={`/order/user/${order._id}`}
-                                            className=' text-indigo-600 hover:text-indigo-800'>
-                                            {order._id}
-                                        </NavLink>
+                                <tr key={order._id} className='text-center'>
+                                    <td className='px-2 py-4 whitespace-nowrap text-indigo-600'>
+                                        #{order._id?.slice(0, 8)}
                                     </td>
                                     <td className='px-2 py-4 whitespace-nowrap'>
                                         {new Date(order.createdAt).toDateString()}
                                     </td>
                                     <td className='px-2 py-4 whitespace-nowrap'>
-                                        ${order.totals}
+                                        {order.totalProducts}
+                                    </td>
+                                    <td className='px-2 py-4 whitespace-nowrap'>
+                                        {order.totalQuantity}
+                                    </td>
+                                    <td className='px-2 py-4 whitespace-nowrap'>
+                                        {formatPrice(order.totalPrice)}
                                     </td>
                                     <td className='px-2 py-4 whitespace-nowrap'>
                                         <span
@@ -99,7 +108,7 @@ const OrderHistory = () => {
                 </div>
                 <NavLink
                     to={'/'}
-                    className='w-fit block mx-auto bg-gray-800 hover:bg-gray-700 text-white px-14 py-2 mt-4 rounded'>
+                    className='w-fit block mx-auto bg-gray-800 hover:bg-gray-700 text-white px-6 py-2 mt-4 rounded'>
                     Go Back Home
                 </NavLink>
             </div>

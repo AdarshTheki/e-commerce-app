@@ -18,7 +18,7 @@ const Search = () => {
                         q: searchTerm,
                     },
                 });
-                setData(res.data.data);
+                setData(res.data);
             } catch (error) {
                 toasts({ type: false, message: 'you search item does not exists' });
             } finally {
@@ -40,7 +40,7 @@ const Search = () => {
     }
 
     return (
-        <div>
+        <div className='py-5 bg-gray-100'>
             <ProductList checkStatus={loading} name={`search "${searchTerm}"`} products={data} />
         </div>
     );

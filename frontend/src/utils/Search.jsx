@@ -1,38 +1,36 @@
-import React, { useState, useId } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toasts } from './index';
+import { useForm } from 'react-hook-form';
 
 const HeaderSearch = () => {
-    const [input, setInput] = useState('');
     const navigate = useNavigate();
+    const { handleSubmit, register, reset } = useForm();
 
-    const onSubmit = () => {
-        if (input.length > 3) {
-            navigate(`/search/${input}`);
-            setInput('');
+    const onSubmit = (data) => {
+        if (data?.search?.length >= 3) {
+            navigate(`/search/${data?.search}`);
+            reset();
         } else {
             toasts({ type: false, message: 'please enter inputs at least 3 char' });
         }
     };
 
-    const id = useId();
-
     return (
-        <>
+        <form className='flex flex-wrap items-center gap-2' onSubmit={handleSubmit(onSubmit)}>
             <input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
+                placeholder='search items...'
+                {...register('search', {
+                    required: true,
+                })}
+                autoComplete='off'
                 type='text'
-                id={id}
-                placeholder='Search...'
-                className='px-4 py-2 rounded-md bg-gray-800 text-white focus:outline-none'
+                className='px-5 py-2 rounded-md border border-gray-400 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-gray-800 font-medium'
             />
-            <button
-                onClick={onSubmit}
-                className='ml-2 px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none'>
+            <button className='bg-gray-800 text-white font-medium hover:bg-gray-700 px-4 py-2 rounded cursor-pointer border border-gray-400 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'>
                 Search
             </button>
-        </>
+        </form>
     );
 };
 
