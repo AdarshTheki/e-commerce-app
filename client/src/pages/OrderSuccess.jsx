@@ -1,23 +1,7 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
-import { removeItem } from '../redux/cartSlice';
-
-let flag = true;
 
 const SuccessOrderPage = () => {
-    const dispatch = useDispatch();
-    const { items } = useSelector((state) => state.cart);
-
-    const cart = items?.filter((i) => i?.flag);
-
-    React.useEffect(() => {
-        if (flag) {
-            cart?.map((i) => dispatch(removeItem(i._id)));
-            flag = false;
-        }
-    }, [cart, dispatch]);
-
     return (
         <div className='flex items-center justify-center py-10 bg-gray-100'>
             <div className='max-w-md w-full bg-white shadow-md rounded-lg p-8'>

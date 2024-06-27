@@ -1,13 +1,19 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { useCheckoutMutation } from '../../redux/apiSlice';
+import { removeItem } from '../../redux/cartSlice';
+import { useDispatch } from 'react-redux';
 
 const CheckoutComponents = ({ carts, totals }) => {
     const [checkout, { isLoading }] = useCheckoutMutation();
+    const dispatch = useDispatch();
 
     const checkoutHandler = async () => {
         const res = await checkout({ cartItems: carts });
-        window.location.href = res.data;
+        if (res.data) {
+            carts?.map((item) => dispatch(removeItem(item._id)));
+            window.location.href = res.data;
+        }
     };
 
     if (!carts || carts?.length === 0) return null;
