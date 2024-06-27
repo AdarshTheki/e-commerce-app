@@ -1,6 +1,6 @@
 ## E-commerce Website (MERN Stack)
 
-The website is deployed on Heroku: [Link]()
+The website is deployed on Vercel: [E-commerce Website Link](https://full-stack-ecommerce-app-delta.vercel.app)
 
 API use with Postman : [Link](https://www.postman.com/aerospace-geologist-25924470/workspace/public-e-commerce/collection/34091040-10477bbe-7028-4820-bda7-b3f48eb557dc?action=share&creator=34091040)
 
