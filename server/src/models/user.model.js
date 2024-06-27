@@ -24,6 +24,24 @@ const userSchema = new Schema(
             enum: ["customer", "admin"],
             default: "customer",
         },
+        likedReviews: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Review",
+            },
+        ],
+        dislikedReviews: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Review",
+            },
+        ],
+        wishlist: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Product",
+            },
+        ],
         avatar: { type: String },
         refreshToken: { type: String },
     },

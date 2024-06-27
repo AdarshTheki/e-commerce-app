@@ -5,6 +5,7 @@ import { User } from "../models/user.model.js";
 import { Order } from "../models/order.model.js";
 import { isValidObjectId } from "mongoose";
 import jwt from "jsonwebtoken";
+import { Review } from "../models/review.mode.js";
 
 // Generate New Access/Refresh Token
 export const createToken = async (userId) => {
@@ -175,7 +176,10 @@ const changePassword = asyncHandler(async (req, res, _) => {
 });
 
 const getMe = asyncHandler(async (req, res, _) => {
-    return res.status(200).json(req.user);
+    if (req.user) {
+        return res.status(200).json(req.user);
+    }
+    req.status(500).json(new ApiError(500, "user not authorized"));
 });
 
 const updateMe = asyncHandler(async (req, res, _) => {
@@ -229,6 +233,89 @@ const getMeOrder = asyncHandler(async (req, res, _) => {
     }
 });
 
+const likeReview = asyncHandler(async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const reviewId = req.params.reviewId;
+
+        const user = await User.findById(userId);
+        const review = await Review.findById(reviewId);
+
+        if (user.likedReviews.includes(reviewId)) {
+            return res.status(200).json(review);
+        }
+
+        if (user.dislikedReviews.includes(reviewId)) {
+            user.dislikedReviews.pull(reviewId);
+            review.dislikes -= 1;
+        }
+
+        user.likedReviews.push(reviewId);
+        review.likes += 1;
+
+        await user.save();
+        await review.save();
+
+        res.status(200).json(review);
+    } catch (error) {
+        throw new ApiError(500, error.message);
+    }
+});
+
+const dislikeReview = asyncHandler(async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const reviewId = req.params.reviewId;
+
+        const user = await User.findById(userId);
+        const review = await Review.findById(reviewId);
+
+        if (user.dislikedReviews.includes(reviewId)) {
+            return res.status(200).json(review);
+        }
+
+        if (user.likedReviews.includes(reviewId)) {
+            user.likedReviews.pull(reviewId);
+            review.likes -= 1;
+        }
+
+        user.dislikedReviews.push(reviewId);
+        review.dislikes += 1;
+
+        await user.save();
+        await review.save();
+
+        res.status(200).json(review);
+    } catch (error) {
+        throw new ApiError(500, error.message);
+    }
+});
+
+const wishlist = asyncHandler(async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const productId = req.params.productId;
+
+        const user = await User.findById(userId);
+
+        const update = user.wishlist.includes(productId)
+            ? { $pull: { wishlist: productId } }
+            : { $addToSet: { wishlist: productId } };
+
+        const updatedUser = await User.findOneAndUpdate(
+            { _id: userId },
+            update,
+            { new: true }
+        );
+
+        await user.save();
+
+        res.status(200).json(updatedUser.wishlist);
+    } catch (error) {
+        throw new ApiError(500, error.message);
+    }
+});
+
 export {
     signUp,
     signIn,
@@ -238,4 +325,7 @@ export {
     logout,
     changePassword,
     updateMe,
+    likeReview,
+    dislikeReview,
+    wishlist,
 };

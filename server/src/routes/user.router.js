@@ -8,6 +8,9 @@ import {
     logout,
     changePassword,
     updateMe,
+    likeReview,
+    dislikeReview,
+    wishlist,
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -25,6 +28,10 @@ router.route("/update").patch(upload.single("avatar"), updateMe);
 router.route("/change-password").patch(changePassword);
 router.route("/logout").get(logout);
 
+router.route("/wishlist/:productId").post(wishlist);
+router.route("/:reviewId/like").post(likeReview);
+router.route("/:reviewId/dislike").post(dislikeReview);
+// Order
 router.route("/order").get(getMeOrder);
 
 export default router;

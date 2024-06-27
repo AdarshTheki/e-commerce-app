@@ -1,13 +1,8 @@
 import { isValidObjectId } from "mongoose";
 import { Product } from "../models/product.model.js";
 import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import {
-    uploadImage,
-    removeImage,
-    uploadMultiImag,
-} from "../utils/cloudinary.js";
+import { uploadImage, uploadMultiImag } from "../utils/cloudinary.js";
 
 const singleProduct = asyncHandler(async (req, res) => {
     try {
