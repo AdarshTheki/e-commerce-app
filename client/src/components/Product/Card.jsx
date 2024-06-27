@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { gallery, Star } from '../../utils';
+import { Star } from '../../utils';
 import { useSelector } from 'react-redux';
 import { useHandleWishlistMutation } from '../../redux/apiSlice';
 import { Heart } from 'lucide-react';
@@ -55,8 +55,12 @@ const Item = ({ _id, thumbnail, discount, rating, title, price }) => {
 
             <div className='sm:h-[180px] h-[100px] overflow-hidden bg-white'>
                 <img
-                    className='mx-auto rounded max-h-[200px]'
-                    src={thumbnail ? thumbnail : gallery.notFound}
+                    className='mx-auto rounded max-h-[200px] w-full'
+                    src={
+                        thumbnail
+                            ? thumbnail
+                            : 'https://dummyjson.com/image/400x300/aaaaaa/ffffff?text=Not+Found'
+                    }
                     alt={title}
                 />
             </div>

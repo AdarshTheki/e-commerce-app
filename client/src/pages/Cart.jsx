@@ -2,15 +2,18 @@ import React, { useMemo } from 'react';
 import Cart from '../components/Cart/Cart';
 import Checkout from '../components/Cart/Checkout';
 import { useSelector } from 'react-redux';
+import NotFound from '../components/Product/Empty';
 
 const CartPage = () => {
     const { items } = useSelector((state) => state.cart);
     const cart = useMemo(() => items?.filter((item) => item.flag), [items]);
     const filterCart = useMemo(() => items?.filter((item) => !item.flag), [items]);
     const totals = useMemo(
-        () => cart.reduce((prev, curr) => prev + curr.price * curr.quantity, 0),
+        () => cart?.reduce((prev, curr) => prev + curr?.price * curr?.quantity, 0),
         [cart]
     );
+
+    if (!items || items.length === 0) return <NotFound />;
 
     return (
         <div className='min-h-screen md:flex justify-between gap-5 w-full'>

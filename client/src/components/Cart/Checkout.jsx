@@ -10,7 +10,7 @@ const CheckoutComponents = ({ carts, totals }) => {
         window.location.href = res.data;
     };
 
-    if (carts?.length === 0) return null;
+    if (!carts || carts?.length === 0) return null;
 
     return (
         <div className='p-5'>
@@ -23,7 +23,10 @@ const CheckoutComponents = ({ carts, totals }) => {
                     <div key={item._id} className='flex flex-col rounded-lg bg-white sm:flex-row'>
                         <img
                             className='m-2 h-24 w-28 rounded-md border object-cover object-center'
-                            src={item?.thumbnail}
+                            src={
+                                item?.thumbnail ||
+                                'https://dummyjson.com/image/400x300/aaaaaa/ffffff?text=Not+Found'
+                            }
                             alt={item.title}
                         />
                         <div className='flex w-full flex-col px-4 py-4'>

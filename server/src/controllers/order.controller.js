@@ -5,8 +5,7 @@ import { stripe } from "../utils/stripe.js";
 
 export const stripWebhook = asyncHandler(async (req, res) => {
     const payload = JSON.stringify(req.body, null, 2);
-    const secret =
-        "whsec_2f738712b9622cdf844248001aa0cb2c37acfbc4775bd8750c9b580878603089";
+    const secret = process.env.STRIPE_WEBHOOK_SECRET;
 
     const header = stripe.webhooks.generateTestHeaderString({
         payload,
@@ -82,8 +81,8 @@ export const checkoutStrip = asyncHandler(async (req, res) => {
                 },
                 quantity: item.quantity,
             })),
-            success_url: "http://localhost:5173/order/success",
-            cancel_url: "http://localhost:5173/checkout",
+            success_url: `${process.env.ECOMMERCE_REDIRECT_URL}/order/success`,
+            cancel_url: `${process.env.ECOMMERCE_REDIRECT_URL}/checkout`,
         });
 
         return res.status(200).json(session.url);

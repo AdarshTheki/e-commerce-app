@@ -21,7 +21,7 @@ const Header = ({ open, setOpen }) => {
 
     return (
         <div className='bg-gray-900 sticky top-0 z-30 text-white'>
-            <section className='flex items-center justify-between py-2 sm:px-4 px-2'>
+            <section className='flex items-center justify-between pb-6 pt-2 sm:px-8 px-2'>
                 <div className='flex items-center sm:gap-6 gap-2'>
                     <NavLink to={'/'} className='flex items-center'>
                         <img src={gallery.logo} alt='Logo' className='h-6' />

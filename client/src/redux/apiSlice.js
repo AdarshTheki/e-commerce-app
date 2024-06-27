@@ -1,7 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+// baseURL=http://localhost:8000/api/v1
+// baseURL=https://full-stack-ecommerce-api-pi.vercel.app/api/v1
+// baseURL=https://full-stack-ecommerce-app-sq9o.onrender.com/api/v1
+
 const baseQuery = fetchBaseQuery({
-    baseUrl: 'http://localhost:8000/api/v1',
+    baseUrl: import.meta.env.VITE_BASE_URL,
     prepareHeaders: (headers) => {
         const token = localStorage.getItem('token');
         if (token) {
