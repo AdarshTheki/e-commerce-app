@@ -1,15 +1,13 @@
 import React, { forwardRef, useId } from 'react';
 
 const Inputs = forwardRef(function Inputs(
-    { label, type = 'text', error, message, className = '', ...props },
+    { label, type = 'text', isError = false, message = '', className = '', ...props },
     ref
 ) {
     const id = useId();
     return (
-        <div className='relative mb-4'>
-            <label
-                htmlFor={id}
-                className='block text-gray-800 hover:text-gray-700 cursor-pointer font-medium text-sm'>
+        <div className='relative mb-4 w-full'>
+            <label htmlFor={id} className='block capitalize text-base font-medium text-[#07074D]'>
                 {label}
             </label>
             <input
@@ -17,10 +15,10 @@ const Inputs = forwardRef(function Inputs(
                 {...props}
                 type={type}
                 ref={ref}
-                className={`w-full px-5 py-2 rounded-md border border-gray-400 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 ${className}`}
+                className={`w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-black/90 outline-none focus:border-[#6A64F1] focus:shadow-md ${className}`}
                 autoComplete='off'
             />
-            {error && <span className='text-rose-600 capitalize text-xs'>{message}</span>}
+            {isError ? <span className='text-rose-600 capitalize text-xs'>{message}</span> : null}
         </div>
     );
 });

@@ -1,41 +1,57 @@
 import toast from 'react-hot-toast';
 
-import banner1 from '../assets/banner_1.jpeg';
-import banner2 from '../assets/banner_2.png';
-import banner3 from '../assets/banner_3.jpeg';
-import banner4 from '../assets/banner_4.jpeg';
-import banner5 from '../assets/banner_5.jpeg';
-
-import logoPng from '../assets/logo.png';
-import logoWebp from '../assets/logo.webp';
-
+import bannerSrc from '../assets/banner.avif';
+import logoSrc from '../assets/logo.webp';
+import notFoundSrc from '../assets/notFound.jpg';
 import Button from './Button';
 import Inputs from './Inputs';
 import Search from './Search';
-import Navigation from './Navigation';
-import Categories from './Categories';
 import Loader from './Loader';
-import Slider from './Slider';
+import Star from './Star';
 
-const bannerImgs = [banner1, banner2, banner3, banner4, banner5];
-const logo = [logoPng, logoWebp];
-
-const formatPrice = (price, currency = 'INR', type = 'currency') => {
-    return new Intl.NumberFormat('en-IN', {
-        style: type,
-        currency: currency,
-    }).format(price * 80);
-};
-
-const toasts = ({ type = true, message = '' }) => {
-    return toast[type ? 'success' : 'error'](message);
+const gallery = {
+    banner: bannerSrc,
+    logo: logoSrc,
+    notFound: notFoundSrc,
 };
 
 // components
-export { Button, Search, Inputs, Navigation, Categories, Slider, Loader };
+export { Button, Search, Inputs, Loader, gallery, Star };
 
-// functions
-export { formatPrice, toasts };
+// Price formate in Dollar
+export const formatPrice = (price, currency = 'INR', type = 'currency') => {
+    return new Intl.NumberFormat('en-IN', {
+        style: type,
+        currency: currency,
+        maximumFractionDigits: 0,
+    }).format(price * 80);
+};
 
-// Objects
-export { bannerImgs, logo };
+// toaster with align center-bottom
+export const toasts = ({ type = true, message = '' }) => {
+    return toast[type ? 'success' : 'error'](message);
+};
+
+// all categories
+export const categories = [
+    'automotive',
+    'fragrances',
+    'furniture',
+    'groceries',
+    'home-decoration',
+    'laptops',
+    'lighting',
+    'mens-shirts',
+    'mens-shoes',
+    'mens-watches',
+    'motorcycle',
+    'skincare',
+    'smartphones',
+    'sunglasses',
+    'tops',
+    'womens-bags',
+    'womens-dresses',
+    'womens-jewellery',
+    'womens-shoes',
+    'womens-watches',
+];

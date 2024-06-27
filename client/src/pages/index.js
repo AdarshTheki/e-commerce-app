@@ -1,21 +1,11 @@
 import Cart from './Cart';
-import CategoryProduct from './CategoryProduct';
-import ProductSingle from './ProductSingle';
-import Search from './Search';
+import Category from './Category';
 import Home from './Home';
-import Checkout from './Checkout';
-import Success from './Success';
-import OrderHistory from './OrderHistory';
-import ProtectedRoute from './ProtectedRoute';
+import OrderSuccess from './OrderSuccess';
+import OrdersList from './OrdersList';
+import ProductSingle from './ProductSingle';
+import Profile from './Profile';
+import Login from './Login';
+import Register from './Register';
 
-export {
-    Cart,
-    ProtectedRoute,
-    Success,
-    OrderHistory,
-    CategoryProduct,
-    Home,
-    ProductSingle,
-    Search,
-    Checkout,
-};
+export { Cart, Category, Home, OrderSuccess, OrdersList, ProductSingle, Profile, Login, Register };

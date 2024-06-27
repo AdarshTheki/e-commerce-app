@@ -75,6 +75,47 @@ export const apiSlice = createApi({
                 body: item,
             }),
         }),
+        handleWishlist: builder.mutation({
+            query: (productId) => ({
+                url: `/auth/wishlist/${productId}`,
+                method: 'POST',
+            }),
+        }),
+        handleLike: builder.mutation({
+            query: (reviewId) => ({
+                url: `/auth/${reviewId}/like`,
+                method: 'POST',
+            }),
+        }),
+        handleDislike: builder.mutation({
+            query: (reviewId) => ({
+                url: `/auth/${reviewId}/dislike`,
+                method: 'POST',
+            }),
+        }),
+        getReviews: builder.query({
+            query: (productId) => `/reviews/product/${productId}`,
+        }),
+        handleAddReview: builder.mutation({
+            query: ({ productId, star, comment }) => ({
+                url: `/reviews`,
+                method: 'POST',
+                body: { productId, star, comment },
+            }),
+        }),
+        handleUpdateReview: builder.mutation({
+            query: ({ reviewId, star, comment }) => ({
+                url: `/reviews/${reviewId}`,
+                method: 'PUT',
+                body: { star, comment },
+            }),
+        }),
+        handleDeleteReview: builder.mutation({
+            query: (reviewId) => ({
+                url: `/reviews/${reviewId}`,
+                method: 'DELETE',
+            }),
+        }),
     }),
 });
 
@@ -92,4 +133,11 @@ export const {
     useChangePasswordMutation,
     useUpdateUserMutation,
     useCheckoutMutation,
+    useHandleDislikeMutation,
+    useHandleLikeMutation,
+    useHandleWishlistMutation,
+    useGetReviewsQuery,
+    useHandleAddReviewMutation,
+    useHandleUpdateReviewMutation,
+    useHandleDeleteReviewMutation,
 } = apiSlice;

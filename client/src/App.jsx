@@ -1,58 +1,71 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+
 import {
     Cart,
-    CategoryProduct,
-    ProtectedRoute,
+    Category,
     Home,
+    OrderSuccess,
+    OrdersList,
     ProductSingle,
-    Search,
-    Checkout,
-    Success,
-    OrderHistory,
+    Profile,
+    Login,
+    Register,
 } from './pages';
-
-import { Loader, toasts } from './utils';
+import { Footer, Header, PrivateRoute, Search } from './components';
+import { toasts } from './utils';
 import { setUser } from './redux/authSlice';
 import { useMeQuery } from './redux/apiSlice';
-import { Sidebar, Footer, Header, Authenticate } from './components';
 
 const App = () => {
     const dispatch = useDispatch();
-    const { data, isLoading } = useMeQuery();
+    const [isOpen, setIsClose] = useState(false); // search model toggle
+    const { data } = useMeQuery();
 
     React.useEffect(() => {
-        if (!isLoading) {
-            if (data?.username) {
-                dispatch(setUser(data));
-                toasts({ message: 'current user successfully login' });
-            }
+        if (data) {
+            dispatch(setUser(data));
+            toasts({ message: 'current user successfully login' });
         }
-    }, [isLoading, data, dispatch]);
-
-    if (isLoading) return <Loader />;
+    }, [data, dispatch]);
 
     return (
-        <div className='max-w-screen-2xl mx-auto'>
-            <Router>
-                <Header />
-                <Sidebar />
-                <Authenticate />
-                <Routes>
-                    <Route path='/' element={<Home />} />
-                    <Route path='/category/:category' element={<CategoryProduct />} />
-                    <Route path='/search/:searchTerm' element={<Search />} />
-                    <Route path='/cart' element={<Cart />} />
-                    <Route path='/product/:id' element={<ProductSingle />} />
-                    <Route path='/checkout' element={<Checkout />} />
-                    <Route path='/order/success' element={<Success />} />
-                    <Route path='/order/history' element={<OrderHistory />} />
-                    <Route element={<ProtectedRoute />}></Route>
-                </Routes>
-                <Footer />
-            </Router>
-        </div>
+        <>
+            <div className='max-w-screen-2xl h-screen mx-auto'>
+                <Router>
+                    <Header setOpen={setIsClose} open={isOpen} />
+                    <Search setOpen={setIsClose} open={isOpen} />
+                    <Routes>
+                        <Route path='/' element={<Home />} />
+                        <Route path='/category/:category' element={<Category />} />
+                        <Route path='/product/:id' element={<ProductSingle />} />
+                        <Route path='/order/success' element={<OrderSuccess />} />
+                        <Route path='/order/history' element={<OrdersList />} />
+                        <Route path='/login' element={<Login />} />
+                        <Route path='/register' element={<Register />} />
+
+                        <Route
+                            path='/user'
+                            element={
+                                <PrivateRoute path='/login'>
+                                    <Profile />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path='/cart'
+                            element={
+                                <PrivateRoute path='/login'>
+                                    <Cart />
+                                </PrivateRoute>
+                            }
+                        />
+                    </Routes>
+                    <Footer />
+                </Router>
+            </div>
+        </>
     );
 };
 
