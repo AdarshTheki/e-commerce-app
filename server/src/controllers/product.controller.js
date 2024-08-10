@@ -4,7 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadImage, uploadMultiImag } from "../utils/cloudinary.js";
 
-const singleProduct = asyncHandler(async (req, res) => {
+const singleProduct = asyncHandler(async (req, res, next) => {
     try {
         const { productId } = req.params;
 
@@ -19,12 +19,12 @@ const singleProduct = asyncHandler(async (req, res) => {
 
         return res.status(200).json(product);
     } catch (error) {
-        throw new ApiError(500, "Product not found, Internal error");
+        next(error);
     }
 });
 
-const getAllProducts = asyncHandler(async (req, res) => {
-    let { page = 1, limit = 20 } = req.query;
+const getAllProducts = asyncHandler(async (req, res, next) => {
+    let { page = 1, limit = 20, sortBy = "_id" } = req.query;
 
     page = parseInt(page);
     limit = parseInt(limit);
@@ -34,14 +34,14 @@ const getAllProducts = asyncHandler(async (req, res) => {
             {
                 $facet: {
                     products: [
-                        { $sort: { _id: 1 } },
+                        { $sort: { [`${sortBy}`]: 1 } },
                         { $skip: (page - 1) * limit },
                         { $limit: limit },
                         {
                             $project: {
                                 _id: 1,
                                 title: 1,
-                                brand: 1,
+                                rating: 1,
                                 category: 1,
                                 discount: 1,
                                 price: 1,
@@ -68,43 +68,40 @@ const getAllProducts = asyncHandler(async (req, res) => {
             limit: limit,
         });
     } catch (error) {
-        throw new ApiError(500, "products does not exists, Internal error");
+        next(error);
     }
 });
 
-const getAllCategories = asyncHandler(async (req, res) => {
+const getAllCategories = asyncHandler(async (req, res, next) => {
     try {
         const results = await Product.distinct("category");
         return res.status(200).json(results);
     } catch (error) {
-        throw new ApiError(500, "Categories not found, internal error");
+        next(error);
     }
 });
 
-const brands = asyncHandler(async (req, res) => {
+const brands = asyncHandler(async (req, res, next) => {
     try {
         const results = await Product.distinct("brand");
         return res.status(200).json(results);
     } catch (error) {
-        throw new ApiError(500, "Brands not found, internal error");
+        next(error);
     }
 });
 
-const getProductsByCategory = asyncHandler(async (req, res) => {
+const getProductsByCategory = asyncHandler(async (req, res, next) => {
     try {
         const { categoryId } = req.params;
         const results = await Product.find({ category: categoryId });
 
         return res.status(200).json(results);
     } catch (error) {
-        throw new ApiError(
-            500,
-            "Products by category not found, internal error"
-        );
+        next(error);
     }
 });
 
-const productSearch = asyncHandler(async (req, res) => {
+const productSearch = asyncHandler(async (req, res, next) => {
     try {
         const { q } = req.query;
         const results = await Product.find({
@@ -113,7 +110,7 @@ const productSearch = asyncHandler(async (req, res) => {
                 { brand: { $regex: new RegExp(q, "i") } },
                 { category: { $regex: new RegExp(q, "i") } },
             ],
-        });
+        }).limit(10);
 
         if (results.length === 0) {
             throw new ApiError(500, "items does not found");
@@ -121,11 +118,11 @@ const productSearch = asyncHandler(async (req, res) => {
 
         return res.status(200).json(results);
     } catch (error) {
-        throw new ApiError(500, "items not found, internal error");
+        next(error);
     }
 });
 
-const addProduct = asyncHandler(async (req, res) => {
+const addProduct = asyncHandler(async (req, res, next) => {
     const { thumbnail, images } = req.files;
     const {
         title,
@@ -168,11 +165,11 @@ const addProduct = asyncHandler(async (req, res) => {
 
         return res.status(200).json(product);
     } catch (error) {
-        throw new ApiError(500, error?.message);
+        next(error);
     }
 });
 
-const updateProduct = asyncHandler(async (req, res) => {
+const updateProduct = asyncHandler(async (req, res, next) => {
     const { title, description, category, price } = req.body;
     try {
         const product = await Product.findOne({ _id: req.params.productId });
@@ -211,22 +208,23 @@ const updateProduct = asyncHandler(async (req, res) => {
 
         return res.status(200).json(product);
     } catch (error) {
-        throw new ApiError(500, error?.message);
+        next(error);
     }
 });
 
-const deleteProduct = asyncHandler(async (req, res) => {
+const deleteProduct = asyncHandler(async (req, res, next) => {
     try {
-        await Product.deleteOne({ _id: req.params.productId });
+        const deleted = await Product.deleteOne({ _id: req.params.productId });
+        if (!deleted) {
+            throw new ApiError(404, "product not deleted on database");
+        }
+
         return res.status(200).json({
             message: "product deleted successfully",
             statusCode: 200,
         });
     } catch (error) {
-        throw new ApiError(
-            500,
-            error?.message || "product not delete properly, internal error"
-        );
+        next(error);
     }
 });
 

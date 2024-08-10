@@ -21,21 +21,9 @@ const userSchema = new Schema(
         password: { type: String, required: [true, "Password is Required!"] },
         role: {
             type: String,
-            enum: ["customer", "admin"],
+            enum: ["customer", "admin", "user"],
             default: "customer",
         },
-        likedReviews: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Review",
-            },
-        ],
-        dislikedReviews: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Review",
-            },
-        ],
         wishlist: [
             {
                 type: mongoose.Schema.Types.ObjectId,

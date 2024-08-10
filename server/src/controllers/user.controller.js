@@ -1,11 +1,11 @@
+import { isValidObjectId } from "mongoose";
+import jwt from "jsonwebtoken";
+
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
 import { Order } from "../models/order.model.js";
-import { isValidObjectId } from "mongoose";
-import jwt from "jsonwebtoken";
-import { Review } from "../models/review.mode.js";
 
 // Generate New Access/Refresh Token
 export const createToken = async (userId) => {
@@ -21,11 +21,13 @@ export const createToken = async (userId) => {
 
         return { accessToken, refreshToken };
     } catch (error) {
-        throw new ApiError(500, error?.message);
+        return new ApiError(404, "error generated to access token", [
+            "access token invalid",
+        ]);
     }
 };
 
-const signUp = asyncHandler(async (req, res, _) => {
+const signUp = asyncHandler(async (req, res, next) => {
     const { email, password, username, role } = req.body;
     try {
         // Validate that all fields are not empty
@@ -54,11 +56,11 @@ const signUp = asyncHandler(async (req, res, _) => {
         }
         return res.status(200).json(createdUser);
     } catch (error) {
-        throw new ApiError(500, error.message);
+        next(error);
     }
 });
 
-const signIn = asyncHandler(async (req, res, _) => {
+const signIn = asyncHandler(async (req, res, next) => {
     const { email, password } = req.body;
     try {
         const tempUser = await User.findOne({ email });
@@ -89,13 +91,14 @@ const signIn = asyncHandler(async (req, res, _) => {
             .cookie("accessToken", accessToken, payload)
             .json({ user, accessToken, refreshToken });
     } catch (error) {
-        throw new ApiError(500, null, error.message);
+        next(error);
     }
 });
 
-const logout = asyncHandler(async (req, res, _) => {
-    const userId = req?.user?._id;
+const logout = asyncHandler(async (req, res, next) => {
     try {
+        const userId = req?.user?._id;
+
         if (!isValidObjectId(userId)) {
             return res
                 .status(401)
@@ -108,17 +111,18 @@ const logout = asyncHandler(async (req, res, _) => {
             { $unset: { refreshToken: 1 } },
             { new: true }
         );
+
         return res
             .status(200)
             .clearCookie("refreshToken", { httpOnly: true })
             .clearCookie("accessToken", { httpOnly: true })
             .json(new ApiResponse(200, {}, "User :: Logged Out"));
     } catch (error) {
-        return res.status(500).json(new ApiResponse(500, null, error.message));
+        next(error);
     }
 });
 
-const getRefreshToken = asyncHandler(async (req, res, _) => {
+const getRefreshToken = asyncHandler(async (req, res, next) => {
     try {
         const incomingRefreshToken =
             req.cookies.refreshToken || req.body.refreshToken;
@@ -148,11 +152,11 @@ const getRefreshToken = asyncHandler(async (req, res, _) => {
             .cookie("refreshToken", refreshToken, { httpOnly: true })
             .json({ user, accessToken, refreshToken });
     } catch (error) {
-        throw new ApiError(500, error.message);
+        next(error);
     }
 });
 
-const changePassword = asyncHandler(async (req, res, _) => {
+const changePassword = asyncHandler(async (req, res, next) => {
     const { email, oldPassword, newPassword } = req.body;
     try {
         const user = await User.findOne({ email: email });
@@ -171,127 +175,24 @@ const changePassword = asyncHandler(async (req, res, _) => {
 
         return res.status(200).json(user);
     } catch (error) {
-        throw new ApiError(500, error?.message);
+        next(error);
     }
 });
 
-const getMe = asyncHandler(async (req, res, _) => {
-    if (req.user) {
+const getMe = asyncHandler(async (req, res, next) => {
+    try {
+        if (!req.user) {
+            throw new ApiError(500, "user not authorized", [
+                "user token invalid",
+            ]);
+        }
         return res.status(200).json(req.user);
-    }
-    req.status(500).json(new ApiError(500, "user not authorized"));
-});
-
-const updateMe = asyncHandler(async (req, res, _) => {
-    const { username, role } = req.body;
-    const userId = req.user?._id;
-    try {
-        const user = await User.findOne({ _id: userId });
-
-        if (!user) {
-            throw new ApiError("user :: user does not exists");
-        }
-
-        if (username && user.username !== username) {
-            user.username = username;
-
-            if (["customer", "admin"].includes(role)) {
-                user.role = role;
-            }
-
-            await user.save({ validateBeforeSave: false });
-
-            return res.status(200).json(user);
-        }
     } catch (error) {
-        return res.status(500).json(new ApiResponse(500, null, error.message));
+        next(error);
     }
 });
 
-const getMeOrder = asyncHandler(async (req, res, _) => {
-    try {
-        const userId = req.user._id;
-        const orderHistory = await Order.aggregate([
-            { $match: { user: userId } }, // Match orders with the current user's ID
-            {
-                $lookup: {
-                    from: "products", // Assuming the collection name of products
-                    localField: "products.productId",
-                    foreignField: "_id",
-                    as: "orderedProducts",
-                },
-            },
-        ]);
-
-        if (orderHistory.length === 0) {
-            throw new ApiError(401, "user :: order history does not exists");
-        }
-
-        return res.status(200).json(orderHistory);
-    } catch (error) {
-        throw new ApiError(500, error.message);
-    }
-});
-
-const likeReview = asyncHandler(async (req, res) => {
-    try {
-        const userId = req.user._id;
-        const reviewId = req.params.reviewId;
-
-        const user = await User.findById(userId);
-        const review = await Review.findById(reviewId);
-
-        if (user.likedReviews.includes(reviewId)) {
-            return res.status(200).json(review);
-        }
-
-        if (user.dislikedReviews.includes(reviewId)) {
-            user.dislikedReviews.pull(reviewId);
-            review.dislikes -= 1;
-        }
-
-        user.likedReviews.push(reviewId);
-        review.likes += 1;
-
-        await user.save();
-        await review.save();
-
-        res.status(200).json(review);
-    } catch (error) {
-        throw new ApiError(500, error.message);
-    }
-});
-
-const dislikeReview = asyncHandler(async (req, res) => {
-    try {
-        const userId = req.user._id;
-        const reviewId = req.params.reviewId;
-
-        const user = await User.findById(userId);
-        const review = await Review.findById(reviewId);
-
-        if (user.dislikedReviews.includes(reviewId)) {
-            return res.status(200).json(review);
-        }
-
-        if (user.likedReviews.includes(reviewId)) {
-            user.likedReviews.pull(reviewId);
-            review.likes -= 1;
-        }
-
-        user.dislikedReviews.push(reviewId);
-        review.dislikes += 1;
-
-        await user.save();
-        await review.save();
-
-        res.status(200).json(review);
-    } catch (error) {
-        throw new ApiError(500, error.message);
-    }
-});
-
-const wishlist = asyncHandler(async (req, res) => {
+const wishlist = asyncHandler(async (req, res, next) => {
     try {
         const userId = req.user._id;
         const productId = req.params.productId;
@@ -312,7 +213,7 @@ const wishlist = asyncHandler(async (req, res) => {
 
         res.status(200).json(updatedUser.wishlist);
     } catch (error) {
-        throw new ApiError(500, error.message);
+        next(error);
     }
 });
 
@@ -321,11 +222,7 @@ export {
     signIn,
     getRefreshToken,
     getMe,
-    getMeOrder,
     logout,
     changePassword,
-    updateMe,
-    likeReview,
-    dislikeReview,
     wishlist,
 };

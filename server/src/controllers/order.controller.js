@@ -1,9 +1,9 @@
 import { Order } from "../models/order.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
-import { stripe } from "../utils/stripe.js";
+import { stripe } from "../constant.js";
 
-export const stripWebhook = asyncHandler(async (req, res) => {
+export const stripWebhook = asyncHandler(async (req, res, next) => {
     const payload = JSON.stringify(req.body, null, 2);
     const secret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -55,11 +55,11 @@ export const stripWebhook = asyncHandler(async (req, res) => {
             return res.status(400).json({ message: "Failed Payment" });
         }
     } catch (error) {
-        throw new ApiError(500, error.message);
+        next(error);
     }
 });
 
-export const checkoutStrip = asyncHandler(async (req, res) => {
+export const checkoutStrip = asyncHandler(async (req, res, next) => {
     const { cartItems } = req.body;
     try {
         const session = await stripe.checkout.sessions.create({
@@ -87,16 +87,21 @@ export const checkoutStrip = asyncHandler(async (req, res) => {
 
         return res.status(200).json(session.url);
     } catch (error) {
-        throw new ApiError(500, error?.message);
+        next(error);
     }
 });
 
-export const getAllOrders = asyncHandler(async (req, res) => {
+export const getAllOrders = asyncHandler(async (req, res, next) => {
     try {
         const allOrders = await Order.find().sort({ createdAt: -1 }).exec();
 
+        if (!allOrders)
+            throw new ApiError(404, "not found orders", [
+                "not found orders on database",
+            ]);
+
         return res.status(200).json(allOrders);
     } catch (error) {
-        throw new ApiError(500, error.message);
+        next(error);
     }
 });
