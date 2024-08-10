@@ -7,5 +7,17 @@ import ProductSingle from './ProductSingle';
 import Profile from './Profile';
 import Login from './Login';
 import Register from './Register';
+import Contact from './Contact';
 
-export { Cart, Category, Home, OrderSuccess, OrdersList, ProductSingle, Profile, Login, Register };
+export {
+    Cart,
+    Contact,
+    Category,
+    Home,
+    OrderSuccess,
+    OrdersList,
+    ProductSingle,
+    Profile,
+    Login,
+    Register,
+};

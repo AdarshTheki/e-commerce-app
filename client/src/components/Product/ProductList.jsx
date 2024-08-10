@@ -1,17 +1,12 @@
 /* eslint-disable react/prop-types */
 import { Loader } from '../../utils';
-import Card from './Card';
-import Empty from './Empty';
+import ProductItem from './ProductItem';
+import ProductEmpty from './ProductEmpty';
 
-export default function Container({
-    checkStatus = false,
-    name = 'Products',
-    products = [],
-    message = 'Some thing went wrong! Your products is not found...',
-}) {
+export default function ProductList({ checkStatus = false, name = 'Products', products = [] }) {
     if (checkStatus) return <Loader />;
 
-    if (!products.length) return <Empty message={message} />;
+    if (!products.length) return <ProductEmpty />;
 
     return (
         <div className='max-w-screen-xl mx-auto'>
@@ -20,7 +15,7 @@ export default function Container({
             </h2>
             <div className='w-full relative grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 sm:gap-4 gap-2'>
                 {products?.map((product) => (
-                    <Card {...product} key={product._id} />
+                    <ProductItem {...product} key={product._id} />
                 ))}
             </div>
         </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, toasts } from './index';
+import { Button, } from './index';
 import { useForm } from 'react-hook-form';
 
 const HeaderSearch = () => {

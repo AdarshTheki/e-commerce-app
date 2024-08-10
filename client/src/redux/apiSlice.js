@@ -21,7 +21,8 @@ export const apiSlice = createApi({
     baseQuery,
     endpoints: (builder) => ({
         products: builder.query({
-            query: (limit = 20) => `/products?limit=${limit}`,
+            query: ({ limit = 20, page = 1, sortBy = '_id' }) =>
+                `/products?limit=${limit}&page=${page}&sortBy=${sortBy}`,
         }),
         productById: builder.query({
             query: (id) => `/products/id/${id}`,
@@ -85,33 +86,21 @@ export const apiSlice = createApi({
                 method: 'POST',
             }),
         }),
-        handleLike: builder.mutation({
-            query: (reviewId) => ({
-                url: `/auth/${reviewId}/like`,
-                method: 'POST',
-            }),
-        }),
-        handleDislike: builder.mutation({
-            query: (reviewId) => ({
-                url: `/auth/${reviewId}/dislike`,
-                method: 'POST',
-            }),
-        }),
         getReviews: builder.query({
             query: (productId) => `/reviews/product/${productId}`,
         }),
         handleAddReview: builder.mutation({
-            query: ({ productId, star, comment }) => ({
+            query: (item) => ({
                 url: `/reviews`,
                 method: 'POST',
-                body: { productId, star, comment },
+                body: JSON.stringify(item),
             }),
         }),
         handleUpdateReview: builder.mutation({
-            query: ({ reviewId, star, comment }) => ({
+            query: ({ reviewId, rating, comment }) => ({
                 url: `/reviews/${reviewId}`,
                 method: 'PUT',
-                body: { star, comment },
+                body: { rating, comment },
             }),
         }),
         handleDeleteReview: builder.mutation({
@@ -137,8 +126,6 @@ export const {
     useChangePasswordMutation,
     useUpdateUserMutation,
     useCheckoutMutation,
-    useHandleDislikeMutation,
-    useHandleLikeMutation,
     useHandleWishlistMutation,
     useGetReviewsQuery,
     useHandleAddReviewMutation,

@@ -12,30 +12,33 @@ import {
     Profile,
     Login,
     Register,
+    Contact,
 } from './pages';
-import { Footer, Header, PrivateRoute, Search } from './components';
-import { toasts } from './utils';
+import { Footer, Header, PrivateRoute, ProductEmpty, SearchBart } from './components';
 import { setUser } from './redux/authSlice';
 import { useMeQuery } from './redux/apiSlice';
+import toast from 'react-hot-toast';
 
 const App = () => {
+    const [open, setOpen] = React.useState(false);
     const dispatch = useDispatch();
-    const [isOpen, setIsClose] = useState(false); // search model toggle
     const { data } = useMeQuery();
 
     React.useEffect(() => {
         if (data) {
             dispatch(setUser(data));
-            toasts({ message: 'current user successfully login' });
+            toast.success('current user successfully login');
         }
     }, [data, dispatch]);
+
+    const handleToggle = () => setOpen(!open);
 
     return (
         <>
             <div className='max-w-screen-2xl h-screen mx-auto'>
                 <Router>
-                    <Header setOpen={setIsClose} open={isOpen} />
-                    <Search setOpen={setIsClose} open={isOpen} />
+                    <Header toggle={handleToggle} />
+                    {open && <SearchBart setOpen={handleToggle} />}
                     <Routes>
                         <Route path='/' element={<Home />} />
                         <Route path='/category/:category' element={<Category />} />
@@ -44,6 +47,8 @@ const App = () => {
                         <Route path='/order/history' element={<OrdersList />} />
                         <Route path='/login' element={<Login />} />
                         <Route path='/register' element={<Register />} />
+                        <Route path='/contact' element={<Contact />} />
+                        <Route path='*' element={<ProductEmpty />} />
 
                         <Route
                             path='/user'

@@ -2,9 +2,10 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Eye, EyeOff } from 'lucide-react';
 
-import { Inputs, toasts } from '../utils';
+import { Inputs } from '../utils';
 import { useSignInMutation } from '../redux/apiSlice';
 import { NavLink, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -12,15 +13,15 @@ const Register = () => {
     const [passwordShow, setPasswordShow] = React.useState(false);
     const { errors } = formState;
 
-    const [signIn, { isLoading, isError, error }] = useSignInMutation();
+    const [signIn, { isLoading }] = useSignInMutation();
 
     const submitForm = async (userData) => {
-        await signIn(userData).unwrap();
-        if (!isError) {
-            toasts({ message: 'User register succeed' });
+        const res = await signIn(userData);
+        if (res.data) {
+            toast.success('user successfully register');
             navigate('/login');
-        } else {
-            toasts({ type: true, message: error.message });
+        } else if (res.error) {
+            toast.error('user not register, Please check input Fields');
         }
     };
 

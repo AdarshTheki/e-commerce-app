@@ -1,8 +1,8 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { toasts } from '../utils';
 import { setLogout } from '../redux/authSlice';
+import toast from 'react-hot-toast';
 
 const UserPage = () => {
     const user = useSelector((state) => state.auth.user);
@@ -10,7 +10,7 @@ const UserPage = () => {
 
     const logoutHandler = async () => {
         dispatch(setLogout());
-        toasts({ message: 'user logout successfully' });
+        toast.success('user has been logout');
     };
 
     const ReadInputs = ({ name = '', value = '' }) => {

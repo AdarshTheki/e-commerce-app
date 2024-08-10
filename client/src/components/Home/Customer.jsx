@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star } from '../../utils';
+import { StarRating } from '../../utils';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Customer = () => {
@@ -37,7 +37,7 @@ const Customer = () => {
             <div className='flex gap-5 overflow-x-auto' ref={containerRef}>
                 {[...Array(3)].map((_, index) => (
                     <div key={index} className='min-w-[260px]'>
-                        <Star rating={5} />
+                        <StarRating rating={5} />
                         <p className='text-xl font-semibold'>Demo User</p>
                         <p className=''>
                             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vel ipsam

@@ -1,24 +1,24 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { Star } from '../../utils';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { useHandleWishlistMutation } from '../../redux/apiSlice';
 import { Heart } from 'lucide-react';
+import { useHandleWishlistMutation } from '../../redux/apiSlice';
+import { StarRating, LazyImage, formatPrice } from '../../utils';
 
 const Item = ({ _id, thumbnail, discount, rating, title, price }) => {
     const { user } = useSelector((state) => state.auth);
     const navigate = useNavigate();
 
-    const [wishlist, setWishlist] = useState(user?.wishlist?.includes(_id));
+    const [wishlist, setWishlist] = useState(user?.wishlist.includes(_id));
     const [handleWishlist, { isLoading }] = useHandleWishlistMutation();
 
     const onWishlist = async () => {
         try {
             if (!user) return navigate('/login');
-
-            await handleWishlist(_id);
-            setWishlist(!wishlist);
+            const { data } = await handleWishlist(_id);
+            console.log('wishlist: ', data);
+            setWishlist(data.includes(_id));
         } catch (error) {
             console.log(error.message);
         }
@@ -47,15 +47,17 @@ const Item = ({ _id, thumbnail, discount, rating, title, price }) => {
                         <span className='sr-only'>Loading...</span>
                     </div>
                 ) : (
-                    <button onClick={onWishlist} className='hover:opacity-80'>
+                    <button
+                        onClick={onWishlist}
+                        className='hover:opacity-80'
+                        title='Add to wishlist ❤'>
                         {wishlist ? <Heart color='#FF0000' fill='#FF0000' /> : <Heart />}
                     </button>
                 )}
             </div>
 
             <div className='sm:h-[180px] h-[100px] overflow-hidden bg-white'>
-                <img
-                    className='mx-auto rounded max-h-[200px] w-full'
+                <LazyImage
                     src={
                         thumbnail
                             ? thumbnail
@@ -65,25 +67,18 @@ const Item = ({ _id, thumbnail, discount, rating, title, price }) => {
                 />
             </div>
             <div className='text-gray-800 grid gap-1 p-4'>
-                <NavLink
+                <Link
+                    title={title}
                     to={`/product/${_id}`}
-                    className='sm:text-lg text-blue-700 hover:text-blue-900 font-extrabold'>
-                    {title.substring(0, 20)}
-                </NavLink>
-                <div className='inline sm:hidden'>
-                    <span className='text-[#ffa534] text-xl'>★</span> {rating?.toFixed(1)}/5
-                </div>
-                <div className='sm:inline hidden'>
-                    <Star rating={rating} />
-                </div>
+                    className='line-clamp-1 text-blue-700 hover:text-blue-900 font-bold'>
+                    {title}
+                </Link>
+                <StarRating rating={rating} />
                 <p className='space-x-2'>
-                    <span className='sm:text-xl font-extrabold'>
-                        ${Math.round(price - price * (discount / 100))}
+                    <span className='font-bold'>
+                        {formatPrice(price)}
                     </span>
-                    <span className='sm:text-xl hidden sm:inline font-extrabold text-gray-400'>
-                        ${Math.round(price)}
-                    </span>
-                    <span className='text-rose-600 bg-red-100 text-xs px-3 py-1 rounded-xl'>
+                    <span className='text-rose-600 font-medium bg-red-100 text-xs px-2 py-0.5 rounded-xl'>
                         {discount}%
                     </span>
                 </p>

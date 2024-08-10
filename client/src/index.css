@@ -7,3 +7,15 @@
 * {
     font-family: 'DM Sans', sans-serif;
 }
+
+.lazy-image {
+    width: 100%;
+    height: auto;
+    min-height: 150px; /* Placeholder height */
+    background-color: #f0f0f0; /* Placeholder color */
+    transition: opacity 0.3s ease-in-out;
+}
+
+.lazy-image.loaded {
+    opacity: 1; /* Visible once loaded */
+}

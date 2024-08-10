@@ -3,23 +3,25 @@ import { useForm } from 'react-hook-form';
 import { Eye, EyeOff } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
-import { Inputs, toasts } from '../utils';
+import { Inputs } from '../utils';
 import { useLoginMutation } from '../redux/apiSlice';
+import toast from 'react-hot-toast';
 
 const Login = () => {
     const { register, handleSubmit, formState } = useForm();
     const [passwordShow, setPasswordShow] = React.useState(false);
     const { errors } = formState;
 
-    const [login, { isLoading, isError, error }] = useLoginMutation();
+    const [login, { isLoading }] = useLoginMutation();
 
     const submitForm = async (userData) => {
-        const user = await login(userData).unwrap();
-        if (isError) {
-            toasts({ type: true, message: error.message });
-        } else {
-            localStorage.setItem('token', user.accessToken);
+        const user = await login(userData);
+        if (user.data) {
+            toast.success('user successfully login');
+            localStorage.setItem('token', user.data.accessToken);
             window.location.href = '/';
+        } else if (user.error) {
+            toast.error('User not login properly, Please check your inputs files');
         }
     };
 

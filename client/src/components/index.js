@@ -1,42 +1,48 @@
+// commons
 import Header from './Common/Header';
 import Footer from './Common/Footer';
 import PrivateRoute from './Common/PrivateRoute';
-import Banner from './Home/Banner';
-import Customer from './Home/Customer';
-import ProductList from './Home/ProductList';
+import SearchBart from './Search/SearchBar';
+
+// carts
 import Cart from './Cart/Cart';
 import Checkout from './Cart/Checkout';
-import Empty from './Product/Empty';
-import Card from './Product/Card';
-import CardLists from './Product/CardLists';
-import CardDetail from './Product/CardDetail';
-import NotFound from './NotFound';
-import Search from './Search';
-// product detail
-import AddReview from './Product/AddReview';
-import DetailList from './Product/DetailList';
-import FAQ from './Product/FAQ';
-import GetReview from './Product/GetReview';
-import Licenses from './Product/Licenses';
+
+// home
+import Banner from './Home/Banner';
+import Customer from './Home/Customer';
+import ItemList from './Home/ItemList';
+import FAQ from './Home/FAQ';
+import Licenses from './Home/Licenses';
+
+// products
+import ProductDetail from './Product/ProductDetail';
+import ProductItem from './Product/ProductItem';
+import ProductList from './Product/ProductList';
+import ProductEmpty from './Product/ProductEmpty';
+
+// reviews
+import ReviewForm from './Review/ReviewForm';
+import ReviewList from './Review/ReviewList';
+import ReviewManage from './Review/ReviewManage';
 
 export {
-    AddReview,
-    DetailList,
-    FAQ,
-    GetReview,
-    Licenses,
-    Search,
-    NotFound,
-    Banner,
-    Customer,
-    ProductList,
+    Header,
+    Footer,
+    PrivateRoute,
+    SearchBart,
     Cart,
     Checkout,
-    PrivateRoute,
-    Footer,
-    Header,
-    Empty,
-    Card,
-    CardLists,
-    CardDetail,
+    Banner,
+    Customer,
+    ItemList,
+    FAQ,
+    Licenses,
+    ProductDetail,
+    ProductItem,
+    ProductList,
+    ProductEmpty,
+    ReviewForm,
+    ReviewList,
+    ReviewManage,
 };

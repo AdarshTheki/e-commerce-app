@@ -9,10 +9,11 @@ import {
     updateItemQuantity,
 } from '../../redux/cartSlice';
 import { Button } from '../../utils';
-import { Card } from '../index';
+import { ProductItem } from '../index';
 
 const CartItem = ({ item }) => {
     const dispatch = useDispatch();
+
     return (
         <div key={item._id} className='relative'>
             <button
@@ -20,7 +21,7 @@ const CartItem = ({ item }) => {
                 className='absolute z-10 top-3 left-5 p-2 rounded-lg bg-red-600 font-semibold'>
                 <Trash2 color='#fff' />
             </button>
-            <Card {...item} />
+            <ProductItem {...item} />
             {item.flag ? (
                 <div className='sm:flex justify-between items-center px-4 py-2'>
                     <p className='font-medium'>Quantity: {item.quantity}</p>

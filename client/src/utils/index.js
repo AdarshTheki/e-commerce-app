@@ -5,9 +5,9 @@ import logoSrc from '../assets/logo.webp';
 import notFoundSrc from '../assets/notFound.jpg';
 import Button from './Button';
 import Inputs from './Inputs';
-import Search from './Search';
 import Loader from './Loader';
-import Star from './Star';
+import StarRating from './StarRating';
+import LazyImage from './LazyImage';
 
 const gallery = {
     banner: bannerSrc,
@@ -16,14 +16,15 @@ const gallery = {
 };
 
 // components
-export { Button, Search, Inputs, Loader, gallery, Star };
+export { Button, Inputs, Loader, gallery, StarRating, LazyImage };
 
 // Price formate in Dollar
-export const formatPrice = (price, currency = 'INR', type = 'currency') => {
+export const formatPrice = (price) => {
+    price = price / 80;
     return new Intl.NumberFormat('en-IN', {
-        style: type,
-        currency: currency,
-        maximumFractionDigits: 0,
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 2,
     }).format(price * 80);
 };
 
@@ -34,21 +35,25 @@ export const toasts = ({ type = true, message = '' }) => {
 
 // all categories
 export const categories = [
-    'automotive',
+    'beauty',
     'fragrances',
     'furniture',
     'groceries',
     'home-decoration',
+    'kitchen-accessories',
     'laptops',
-    'lighting',
     'mens-shirts',
     'mens-shoes',
     'mens-watches',
+    'mobile-accessories',
     'motorcycle',
-    'skincare',
+    'skin-care',
     'smartphones',
+    'sports-accessories',
     'sunglasses',
+    'tablets',
     'tops',
+    'vehicle',
     'womens-bags',
     'womens-dresses',
     'womens-jewellery',

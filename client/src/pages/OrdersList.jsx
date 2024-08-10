@@ -1,4 +1,4 @@
-import { Empty } from '../components';
+import { ProductEmpty } from '../components';
 import { Loader, formatPrice } from '../utils';
 import { useOrderQuery } from '../redux/apiSlice';
 
@@ -7,7 +7,7 @@ const OrderHistory = () => {
 
     if (isLoading) return <Loader />;
 
-    if (!data.length) return <Empty message={'Your order is empty'} />;
+    if (!data.length) return <ProductEmpty />;
 
     return (
         <div className='relative overflow-x-auto shadow-md sm:rounded-lg px-4'>
