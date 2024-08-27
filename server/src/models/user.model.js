@@ -6,17 +6,16 @@ const userSchema = new Schema(
     {
         username: {
             type: String,
-            required: [true, "Username is unique & Required!"],
+            required: [true, "Username is Required!"],
             unique: true,
             lowercase: true,
             trim: true,
+            index: true,
         },
         email: {
             type: String,
-            required: [true, "Email is Required!"],
-            unique: true,
+            required: [true, "Email is unique & required!"],
             lowercase: true,
-            trim: true,
         },
         password: { type: String, required: [true, "Password is Required!"] },
         role: {
@@ -30,7 +29,8 @@ const userSchema = new Schema(
                 ref: "Product",
             },
         ],
-        avatar: { type: String },
+        avatar: { type: String }, // cloudinary url
+        coverImage: { type: String }, // cloudinary url
         refreshToken: { type: String },
     },
     { timestamps: true }

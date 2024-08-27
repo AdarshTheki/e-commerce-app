@@ -10,7 +10,7 @@ const productSchema = new Schema({
     rating: { type: Number, required: true },
     stock: { type: Number, required: true },
     thumbnail: { type: String },
-    images: [{ type: String }], // Array of image URLs
+    images: [{ type: String }], // Array of cloudinary image URLs
 });
 
 export const Product = mongoose.model("Product", productSchema);
