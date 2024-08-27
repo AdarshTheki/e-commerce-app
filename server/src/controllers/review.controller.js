@@ -60,4 +60,32 @@ const deleteReview = asyncHandler(async (req, res, next) => {
     }
 });
 
-export { createReview, getReviewsByProduct, updateReview, deleteReview };
+const getReviews = asyncHandler(async (req, res, next) => {
+    try {
+        const reviews = await Review.find({})
+            .sort({ createdAt: -1 })
+            .limit(20)
+            .populate("userId");
+        res.status(200).json(reviews);
+    } catch (error) {
+        next(error);
+    }
+});
+
+const getReviewById = asyncHandler(async (req, res, next) => {
+    try {
+        const review = await Review.findById(req?.params?.id).populate();
+        res.status(200).json(review);
+    } catch (error) {
+        next(error);
+    }
+});
+
+export {
+    createReview,
+    getReviewsByProduct,
+    updateReview,
+    deleteReview,
+    getReviews,
+    getReviewById,
+};

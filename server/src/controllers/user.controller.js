@@ -4,8 +4,8 @@ import jwt from "jsonwebtoken";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { removeSingleImg, uploadSingleImg } from "../utils/cloudinary.js";
 import { User } from "../models/user.model.js";
-import { Order } from "../models/order.model.js";
 
 // Generate New Access/Refresh Token
 export const createToken = async (userId) => {
@@ -156,24 +156,155 @@ const getRefreshToken = asyncHandler(async (req, res, next) => {
     }
 });
 
-const changePassword = asyncHandler(async (req, res, next) => {
-    const { email, oldPassword, newPassword } = req.body;
+const updateUser = asyncHandler(async (req, res, next) => {
+    const { password, email, role, username } = req.body;
     try {
-        const user = await User.findOne({ email: email });
+        const user = await User.findById(req.user?._id);
         if (!user) {
             throw new ApiError(401, "User :: User does not exists");
         }
-
-        const isPasswordValid = await user.isPasswordCorrect(oldPassword);
-
-        if (!isPasswordValid) {
-            throw new ApiError(401, "user :: Password invalid");
+        if (!!password) {
+            user.password = password;
+        }
+        if (!!email) {
+            user.email = email;
+        }
+        if (!!role) {
+            user.role = role;
+        }
+        if (!!username) {
+            user.username = username;
         }
 
-        user.password = newPassword;
         await user.save({ validateBeforeSave: false });
 
         return res.status(200).json(user);
+    } catch (error) {
+        next(error);
+    }
+});
+
+const updateUserAvatar = asyncHandler(async (req, res, next) => {
+    try {
+        const avatarLocalPath = req.file.path;
+
+        if (!avatarLocalPath) {
+            throw new ApiError(404, "local avatar image not found");
+        }
+        const avatar = await uploadSingleImg(avatarLocalPath);
+        if (!avatar) {
+            throw new ApiError(400, "Error while uploading on avatar");
+        }
+        const user = await User.findByIdAndUpdate(
+            req.user?._id,
+            {
+                $set: {
+                    avatar: avatar,
+                },
+            },
+            { new: true }
+        ).select("-password");
+
+        const url = req?.user?.avatar;
+        if (url) {
+            const path = url.split("/");
+            const publicId = path[7].split(".")[0];
+            await removeSingleImg(publicId);
+        }
+
+        return res
+            .status(200)
+            .json({ user, message: "Avatar image updated successfully" });
+    } catch (error) {
+        next(error);
+    }
+});
+
+const removeUserAvatar = asyncHandler(async (req, res, next) => {
+    try {
+        const url = req?.user?.avatar;
+        if (!url) {
+            throw new ApiError(404, "User avatar url not founded");
+        }
+        const path = url.split("/");
+        const publicId = path[7].split(".")[0];
+        const remove = removeSingleImg(publicId);
+        if (remove) {
+            const user = await User.findByIdAndUpdate(
+                req.user?._id,
+                {
+                    $set: {
+                        avatar: "",
+                    },
+                },
+                { new: true }
+            ).select("-password");
+
+            return res.status(200).json({
+                user,
+                message: "avatar image deleted successfully",
+            });
+        }
+        return res.status(200).json({
+            message: "avatar not deleted ",
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+const removeUserCoverImg = asyncHandler(async (req, res, next) => {
+    try {
+        const url = req?.user?.avatar;
+        if (!url) {
+            throw new ApiError(404, "User avatar url not founded");
+        }
+        const path = url.split("/");
+        const publicId = path[7].split(".")[0];
+        const remove = removeSingleImg(publicId);
+        if (remove) {
+            const user = await User.findByIdAndUpdate(
+                req.user?._id,
+                {
+                    $set: {
+                        coverImage: "",
+                    },
+                },
+                { new: true }
+            ).select("-password");
+
+            return res.status(200).json({
+                user,
+                message: "Cover image deleted successfully",
+            });
+        }
+        return res.status(200).json({
+            message: "Cover image not deleted",
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+const updateUserCoverImg = asyncHandler(async (req, res, next) => {
+    try {
+        const coverImageLocalPath = req.file.path;
+        if (!coverImageLocalPath) {
+            throw new ApiError(404, "local cover image not found");
+        }
+        const avatar = await uploadSingleImg(coverImageLocalPath);
+        if (!avatar) {
+            throw new ApiError(400, "Error while uploading on cover image");
+        }
+        const user = await User.findByIdAndUpdate(
+            req.user?._id,
+            { $set: { coverImage: avatar } },
+            { new: true }
+        ).select("-password");
+
+        return res
+            .status(200)
+            .json({ user, message: "Cover image updated successfully" });
     } catch (error) {
         next(error);
     }
@@ -223,6 +354,10 @@ export {
     getRefreshToken,
     getMe,
     logout,
-    changePassword,
+    updateUser,
     wishlist,
+    updateUserAvatar,
+    updateUserCoverImg,
+    removeUserAvatar,
+    removeUserCoverImg,
 };

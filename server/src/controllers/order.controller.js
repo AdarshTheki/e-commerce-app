@@ -37,7 +37,7 @@ export const stripWebhook = asyncHandler(async (req, res, next) => {
 
             const orderItems = lineItems?.map((item) => {
                 return {
-                    price: item.amount_total,
+                    price: Math.floor(item.amount_total),
                     name: item.description,
                     quantity: item.quantity,
                 };
@@ -77,7 +77,7 @@ export const checkoutStrip = asyncHandler(async (req, res, next) => {
                     product_data: {
                         name: item.title,
                     },
-                    unit_amount: item.price * 100,
+                    unit_amount: Math.floor(item.price * 100),
                 },
                 quantity: item.quantity,
             })),
@@ -93,12 +93,9 @@ export const checkoutStrip = asyncHandler(async (req, res, next) => {
 
 export const getAllOrders = asyncHandler(async (req, res, next) => {
     try {
-        const allOrders = await Order.find().sort({ createdAt: -1 }).exec();
+        const allOrders = await Order.find().sort({ createdAt: -1 }).limit(10);
 
-        if (!allOrders)
-            throw new ApiError(404, "not found orders", [
-                "not found orders on database",
-            ]);
+        if (!allOrders) throw new ApiError(404, "not found orders");
 
         return res.status(200).json(allOrders);
     } catch (error) {

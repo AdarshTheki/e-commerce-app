@@ -7,7 +7,7 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const uploadMultiImag = async (images = []) => {
+const uploadMultiImg = async (images = []) => {
     try {
         if (images.length === 0) return [];
         const uploadPromises = images.map((file) =>
@@ -23,7 +23,7 @@ const uploadMultiImag = async (images = []) => {
     }
 };
 
-const uploadImage = async (localFilePath) => {
+const uploadSingleImg = async (localFilePath = "") => {
     try {
         if (!localFilePath) return "";
 
@@ -38,7 +38,7 @@ const uploadImage = async (localFilePath) => {
     }
 };
 
-const removeImage = async (publicId) => {
+const removeSingleImg = async (publicId = "") => {
     try {
         if (!publicId) return "";
 
@@ -51,7 +51,7 @@ const removeImage = async (publicId) => {
     }
 };
 
-const removeMultiImage = async (images = []) => {
+const removeMultiImg = async (images = []) => {
     try {
         if (images.length === 0) return false;
 
@@ -72,4 +72,4 @@ const removeMultiImage = async (images = []) => {
     }
 };
 
-export { uploadImage, removeImage, uploadMultiImag, removeMultiImage };
+export { uploadSingleImg, removeSingleImg, uploadMultiImg, removeMultiImg };

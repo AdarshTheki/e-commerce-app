@@ -1,8 +1,9 @@
 import { isValidObjectId } from "mongoose";
 import { Product } from "../models/product.model.js";
+import { Review } from "../models/review.mode.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { uploadImage, uploadMultiImag } from "../utils/cloudinary.js";
+import { uploadSingleImg, uploadMultiImg } from "../utils/cloudinary.js";
 
 const singleProduct = asyncHandler(async (req, res, next) => {
     try {
@@ -16,8 +17,10 @@ const singleProduct = asyncHandler(async (req, res, next) => {
         if (!product) {
             throw new ApiError(401, "Product not found");
         }
+        const related = await Product.find({ category: product.category });
+        const reviews = await Review.find({ productId }).populate("userId");
 
-        return res.status(200).json(product);
+        return res.status(200).json({ product, related, reviews });
     } catch (error) {
         next(error);
     }
@@ -139,8 +142,8 @@ const addProduct = asyncHandler(async (req, res, next) => {
             throw new ApiError(401, "files not upload properly");
         }
 
-        const thumbnailPath = await uploadImage(thumbnail[0].path);
-        const imagesPath = await uploadMultiImag(images);
+        const thumbnailPath = await uploadSingleImg(thumbnail[0].path);
+        const imagesPath = await uploadMultiImg(images);
 
         if (!thumbnailPath && !imagesPath.length === 0) {
             throw new ApiError(401, "files not upload properly on cloudinary");
@@ -175,14 +178,14 @@ const updateProduct = asyncHandler(async (req, res, next) => {
         const product = await Product.findOne({ _id: req.params.productId });
 
         // if (req?.files?.thumbnail[0]?.path) {
-        //     const thumbnailPath = await uploadImage(
+        //     const thumbnailPath = await uploadSingleImag(
         //         req?.files?.thumbnail[0]?.path
         //     );
         //     product.thumbnail = thumbnailPath;
         // }
 
         // if (req?.files?.images.length > 0) {
-        //     const imagesPath = await uploadMultiImag(req?.files?.images);
+        //     const imagesPath = await uploadMultiImg(req?.files?.images);
         //     product.images = imagesPath;
         // }
 
