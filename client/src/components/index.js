@@ -26,6 +26,12 @@ import ReviewForm from './Review/ReviewForm';
 import ReviewList from './Review/ReviewList';
 import ReviewManage from './Review/ReviewManage';
 
+// Profile
+import UserProfile from './Profile/UserProfile';
+import UserPassword from './Profile/UserPassword';
+import UserInformation from './Profile/UserInformation';
+import AboutMe from './Profile/AboutMe';
+
 export {
     Header,
     Footer,
@@ -45,4 +51,8 @@ export {
     ReviewForm,
     ReviewList,
     ReviewManage,
+    UserProfile,
+    UserPassword,
+    UserInformation,
+    AboutMe,
 };
