@@ -8,11 +8,26 @@
     font-family: 'DM Sans', sans-serif;
 }
 
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background-color: lightgray;
+    border-radius: 10vh;
+}
+
+.gutter {
+    scrollbar-gutter: stable;
+}
+
 .lazy-image {
     width: 100%;
     height: auto;
     min-height: 150px; /* Placeholder height */
-    background-color: #f0f0f0; /* Placeholder color */
+    background-color: #fff; /* Placeholder color */
     transition: opacity 0.3s ease-in-out;
 }
 

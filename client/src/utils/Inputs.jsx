@@ -6,8 +6,8 @@ const Inputs = forwardRef(function Inputs(
 ) {
     const id = useId();
     return (
-        <div className='relative mb-4 w-full'>
-            <label htmlFor={id} className='block capitalize text-base font-medium text-[#07074D]'>
+        <div className='relative text-sm mb-3 w-full text-gray-800'>
+            <label htmlFor={id} className='block capitalize font-semibold'>
                 {label}
             </label>
             <input
@@ -15,10 +15,11 @@ const Inputs = forwardRef(function Inputs(
                 {...props}
                 type={type}
                 ref={ref}
-                className={`w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-black/90 outline-none focus:border-[#6A64F1] focus:shadow-md ${className}`}
+                required={true}
+                className={`w-full rounded-lg border-2 border-gray-200 bg-white py-2 px-4 font-medium outline-none focus:border-[#6A64F1] focus:shadow-md ${className}`}
                 autoComplete='off'
             />
-            {isError ? <span className='text-rose-600 capitalize text-xs'>{message}</span> : null}
+            {isError ? <span className='text-rose-600 lowercase text-xs'>{message}</span> : null}
         </div>
     );
 });

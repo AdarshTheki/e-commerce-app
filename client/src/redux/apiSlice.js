@@ -24,9 +24,6 @@ export const apiSlice = createApi({
             query: ({ limit = 20, page = 1, sortBy = '_id' }) =>
                 `/products?limit=${limit}&page=${page}&sortBy=${sortBy}`,
         }),
-        productById: builder.query({
-            query: (id) => `/products/id/${id}`,
-        }),
         brandList: builder.query({
             query: () => '/products/brands',
         }),
@@ -39,9 +36,7 @@ export const apiSlice = createApi({
         search: builder.query({
             query: (search) => `/products/search?q=${search}`,
         }),
-        order: builder.query({
-            query: () => `/orders/all`,
-        }),
+        // Auth Queries
         me: builder.query({
             query: () => `/auth/me`,
         }),
@@ -59,19 +54,40 @@ export const apiSlice = createApi({
                 body: item,
             }),
         }),
-        changePassword: builder.mutation({
-            query: (item) => ({
-                url: '/auth/change-password',
-                method: 'PATCH',
-                body: item,
-            }),
-        }),
         updateUser: builder.mutation({
-            query: (item) => ({
+            query: ({ password, email, role, username }) => ({
                 url: '/auth/update',
                 method: 'PATCH',
-                body: item,
+                body: JSON.stringify({ password, email, role, username }),
             }),
+        }),
+        uploadAvatar: builder.mutation({
+            query: (formData) => ({
+                url: '/auth/avatar',
+                method: 'PATCH',
+                body: JSON.stringify(formData),
+            }),
+        }),
+        uploadCoverImg: builder.mutation({
+            query: (path) => ({ url: '/auth/cover-image', method: 'PATCH', body: path }),
+        }),
+        removeCoverImg: builder.mutation({
+            query: ({ url }) => ({
+                url: '/auth/cover-image',
+                method: 'DELETE',
+                body: JSON.stringify({ url }),
+            }),
+        }),
+        removeAvatar: builder.mutation({
+            query: ({ url }) => ({
+                url: '/auth/avatar',
+                method: 'DELETE',
+                body: JSON.stringify({ url }),
+            }),
+        }),
+        // Order Queries
+        order: builder.query({
+            query: () => `/orders/all`,
         }),
         checkout: builder.mutation({
             query: (item) => ({
@@ -80,14 +96,16 @@ export const apiSlice = createApi({
                 body: item,
             }),
         }),
+        // Wishlist Queries
         handleWishlist: builder.mutation({
             query: (productId) => ({
                 url: `/auth/wishlist/${productId}`,
                 method: 'POST',
             }),
         }),
-        getReviews: builder.query({
-            query: (productId) => `/reviews/product/${productId}`,
+        // Product Review Queries
+        getReviewById: builder.query({
+            query: (id) => `/reviews/review/${id}`,
         }),
         handleAddReview: builder.mutation({
             query: (item) => ({
@@ -112,23 +130,33 @@ export const apiSlice = createApi({
     }),
 });
 
+export const { useOrderQuery, useCheckoutMutation, useHandleWishlistMutation } = apiSlice;
+
+// Reviews
 export const {
-    useBrandListQuery,
-    useCategoryListQuery,
-    useCategoryQuery,
-    useProductByIdQuery,
-    useProductsQuery,
-    useSearchQuery,
-    useMeQuery,
-    useOrderQuery,
-    useLoginMutation,
-    useSignInMutation,
-    useChangePasswordMutation,
-    useUpdateUserMutation,
-    useCheckoutMutation,
-    useHandleWishlistMutation,
-    useGetReviewsQuery,
+    useGetReviewByIdQuery,
     useHandleAddReviewMutation,
     useHandleUpdateReviewMutation,
     useHandleDeleteReviewMutation,
+} = apiSlice;
+
+// Products
+export const {
+    useBrandListQuery, // check
+    useCategoryListQuery, // check
+    useCategoryQuery,
+    useProductsQuery,
+    useSearchQuery,
+} = apiSlice;
+
+// Auth
+export const {
+    useMeQuery,
+    useLoginMutation,
+    useSignInMutation,
+    useUpdateUserMutation, // check
+    useUploadAvatarMutation,
+    useUploadCoverImgMutation, // check
+    useRemoveAvatarMutation, // check
+    useRemoveCoverImgMutation, // check
 } = apiSlice;
