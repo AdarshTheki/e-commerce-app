@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ShoppingBag } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import toast from 'react-hot-toast';
@@ -21,16 +21,9 @@ const Container = ({
     _id,
     colors = ['#000', '#ffd966', '#800080', '#13dac6'],
 }) => {
-    const [image, setImage] = React.useState(thumbnail);
+    const [image, setImage] = React.useState('');
     const [color, setColor] = React.useState(colors[0]);
     const dispatch = useDispatch();
-
-    React.useEffect(() => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth',
-        });
-    }, [_id]);
 
     return (
         <div className='sm:grid grid-cols-2 gap-10 mt-5 items-start'>
@@ -47,7 +40,11 @@ const Container = ({
                     ))}
                 </div>
                 <div className='overflow-hidden max-w-[400px] max-h-[350px] border'>
-                    <img src={image} alt={title} className='object-contain mx-auto w-full' />
+                    <img
+                        src={image || thumbnail}
+                        alt={title}
+                        className='object-contain mx-auto w-full'
+                    />
                 </div>
             </div>
             {/* Product Descriptions */}

@@ -1,12 +1,11 @@
 import React from 'react';
-import { gallery } from '../../utils';
 
 const Banner = () => {
     return (
         <div
             className='text-black'
             style={{
-                background: `url(${gallery.banner})`,
+                background: `url("/banner.avif")`,
                 backgroundRepeat: 'no-repeat',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',

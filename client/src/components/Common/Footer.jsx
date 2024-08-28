@@ -1,15 +1,14 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { gallery } from '../../utils';
 import { Linkedin, Github, Instagram, Twitter, Facebook } from 'lucide-react';
 
 const Footer = () => {
     return (
-        <footer className='bg-gray-900 text-gray-200 py-8 mt-10'>
+        <footer className='border-t py-8'>
             <div className='container mx-auto flex flex-col md:flex-row justify-between md:items-center px-4'>
                 <div className='mb-4 lg:mb-0'>
                     <div className='flex'>
-                        <img src={gallery.logo} alt='logo' className='h-8 mr-2' />
+                        <img src={'/logo.webp'} alt='logo' className='h-8 mr-2' />
                         <h3 className='text-xl font-semibold mb-2'>ShopUp</h3>
                     </div>
                     <p className='text-sm max-w-[400px]'>
@@ -22,22 +21,22 @@ const Footer = () => {
                     <h3 className='text-xl font-semibold mb-2'>Useful Links</h3>
                     <ul className='text-sm'>
                         <li>
-                            <NavLink to='#' className='hover:text-gray-400'>
+                            <NavLink to='#' className='hover:text-blue-400'>
                                 Home
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to='#' className='hover:text-gray-400'>
+                            <NavLink to='#' className='hover:text-blue-400'>
                                 About Us
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to='#' className='hover:text-gray-400'>
+                            <NavLink to='#' className='hover:text-blue-400'>
                                 Services
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to='#' className='hover:text-gray-400'>
+                            <NavLink to='#' className='hover:text-blue-400'>
                                 Contact
                             </NavLink>
                         </li>
@@ -52,19 +51,19 @@ const Footer = () => {
                 <div>
                     <h3 className='text-xl font-semibold mb-2'>Follow Us</h3>
                     <div className='flex space-x-4'>
-                        <NavLink to='#' className='text-gray-300 hover:text-gray-400'>
+                        <NavLink to='#' className='hover:text-gray-800 text-blue-400'>
                             <Github />
                         </NavLink>
-                        <NavLink to='#' className='text-gray-300 hover:text-gray-400'>
+                        <NavLink to='#' className='hover:text-gray-800 text-blue-400'>
                             <Twitter />
                         </NavLink>
-                        <NavLink to='#' className='text-gray-300 hover:text-gray-400'>
+                        <NavLink to='#' className='hover:text-gray-800 text-blue-400'>
                             <Facebook />
                         </NavLink>
-                        <NavLink to='#' className='text-gray-300 hover:text-gray-400'>
+                        <NavLink to='#' className='hover:text-gray-800 text-blue-400'>
                             <Instagram />
                         </NavLink>
-                        <NavLink to='#' className='text-gray-300 hover:text-gray-400'>
+                        <NavLink to='#' className='hover:text-gray-800 text-blue-400'>
                             <Linkedin />
                         </NavLink>
                     </div>

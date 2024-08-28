@@ -4,7 +4,7 @@ import CartItem from './CartItem';
 
 const CartPage = ({ carts, saveItems }) => {
     return (
-        <div className='p-5 max-w-screen-lg'>
+        <div className='p-5'>
             {/* Cart Item */}
 
             {carts?.length ? (
@@ -12,7 +12,7 @@ const CartPage = ({ carts, saveItems }) => {
                     <h2 className='capitalize font-semibold text-xl sm:text-3xl'>
                         save Cart ( {carts?.length} item )
                     </h2>
-                    <div className='grid gap-5 md:grid-cols-3 sm:grid-cols-2 grid-cols-1'>
+                    <div className='grid gap-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1'>
                         {carts?.map((item) => (
                             <CartItem key={item._id} item={item} />
                         ))}
@@ -31,7 +31,7 @@ const CartPage = ({ carts, saveItems }) => {
                     <h2 className='capitalize font-semibold text-xl sm:text-3xl pb-3'>
                         save Latter ( {saveItems?.length} item )
                     </h2>
-                    <div className='grid gap-5 md:grid-cols-3 sm:grid-cols-2 grid-cols-1'>
+                    <div className='grid gap-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1'>
                         {saveItems?.map((item) => (
                             <CartItem key={item._id} item={item} />
                         ))}

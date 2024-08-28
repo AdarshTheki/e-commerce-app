@@ -1,27 +1,22 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 
-const ProductEmpty = () => {
+export default function ProductEmpty({ message = 'Page not found', to = '/' }) {
     return (
-        <div className='flex flex-col items-center justify-center h-1/2 p-6 text-center'>
-            <svg
-                className='w-24 h-24 text-gray-400'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-                xmlns='http://www.w3.org/2000/svg'>
-                <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth='2'
-                    d='M3 3h18M9 3v18m6-18v18m-6-6h6m-3 6v-6m0-6V3m0 0H9'
-                />
-            </svg>
-            <h2 className='mt-4 text-lg font-medium text-gray-600'>No Products Available</h2>
-            <p className='mt-2 text-sm text-gray-500'>
-                Please check back later or try searching for something else.
-            </p>
+        <div className='mx-auto max-w-screen-sm p-10 flex items-center justify-center flex-col'>
+            <img src='/empty.svg' alt='empty svg' className='w-full max-h-[50vh]' />
+            <div className='text-center space-y-4'>
+                <h2 className='text-2xl font-semibold text-gray-700'>{message}</h2>
+                <p className='text-lg text-gray-500'>
+                    Oops! Looks like you followed a bad link. If you think this is a problem with
+                    us, please tell us. Go back home
+                </p>
+                <NavLink
+                    to={to}
+                    className='rounded-lg text-sm block w-fit mx-auto bg-blue-600 hover:bg-blue-800 font-semibold text-white py-2 px-5'>
+                    Go back home
+                </NavLink>
+            </div>
         </div>
     );
-};
-
-export default ProductEmpty;
+}

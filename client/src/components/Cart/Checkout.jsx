@@ -3,6 +3,7 @@ import React from 'react';
 import { useCheckoutMutation } from '../../redux/apiSlice';
 import { removeItem } from '../../redux/cartSlice';
 import { useDispatch } from 'react-redux';
+import { formatPrice } from '../../utils';
 
 const CheckoutComponents = ({ carts, totals }) => {
     const [checkout, { isLoading }] = useCheckoutMutation();
@@ -42,7 +43,8 @@ const CheckoutComponents = ({ carts, totals }) => {
                             </span>
                             <span className='float-right text-gray-400'>Brand: {item.brand}</span>
                             <p className='text-lg font-bold text-gray-800'>
-                                {item.price} X {item.quantity} = ${item.price * item.quantity}
+                                {formatPrice(item?.price)} X {item.quantity} =
+                                {formatPrice(item?.price * item?.quantity)}
                             </p>
                         </div>
                     </div>
@@ -54,16 +56,18 @@ const CheckoutComponents = ({ carts, totals }) => {
                 <div className='mt-6 border-t border-b py-2'>
                     <div className='flex items-center justify-between'>
                         <p className='font-medium text-gray-900'>Subtotal</p>
-                        <p className='font-semibold text-gray-900'>${totals}</p>
+                        <p className='font-semibold text-gray-900'>{formatPrice(totals)}</p>
                     </div>
                     <div className='flex items-center justify-between'>
                         <p className='font-medium text-gray-900'>Shipping</p>
-                        <p className='font-semibold text-gray-900'>- $20.00</p>
+                        <p className='font-semibold text-gray-900'>-{formatPrice(20)}</p>
                     </div>
                 </div>
                 <div className='mt-6 flex items-center justify-between'>
                     <p className='font-medium text-gray-900'>Total</p>
-                    <p className='text-2xl font-semibold text-gray-900'>${totals + 20}</p>
+                    <p className='text-2xl font-semibold text-gray-900'>
+                        {formatPrice(totals + 20)}
+                    </p>
                 </div>
             </div>
             <button

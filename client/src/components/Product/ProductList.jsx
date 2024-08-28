@@ -2,6 +2,7 @@
 import { Loader } from '../../utils';
 import ProductItem from './ProductItem';
 import ProductEmpty from './ProductEmpty';
+import { useEffect } from 'react';
 
 export default function ProductList({ checkStatus = false, name = 'Products', products = [] }) {
     if (checkStatus) return <Loader />;
