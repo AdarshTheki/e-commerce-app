@@ -1,47 +1,40 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { ProductDetail, ProductList, ProductEmpty, ReviewList, ReviewForm } from '../components';
-import { useProductByIdQuery, useCategoryQuery } from '../redux/apiSlice';
-import { Loader } from '../utils';
 
 const ProductSingle = () => {
     const { id } = useParams();
-    const { data, isLoading } = useProductByIdQuery(id);
-    const { data: categories, isLoading: loading } = useCategoryQuery(data?.category);
+    const [data, setData] = useState(null);
 
-    const [edit, setEdit] = React.useState(false);
-
-    if (isLoading) return <Loader />;
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const res = await fetch(`${import.meta.env.VITE_BASE_URL}/products/id/${id}`);
+                if (!res.ok) {
+                    throw Error('something was wrong?');
+                }
+                const product = await res.json();
+                setData(product);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        fetchData();
+    }, [id]);
 
     if (!data) return <ProductEmpty />;
 
     return (
-        <>
-            <div className='max-w-screen-lg mx-auto p-2'>
-                <ProductDetail {...data} />
-            </div>
-
+        <div className='max-w-screen-lg mx-auto p-2'>
+            <ProductDetail {...data?.product} />
             <hr className='border-b my-10' />
-
-            {/* User Reviews */}
-            <div className='max-w-screen-lg mx-auto p-2'>
-                {edit && <ReviewForm id={id} onClose={() => setEdit(false)} />}
-                <button
-                    onClick={() => setEdit(true)}
-                    className='py-2 px-4 block mx-auto rounded-lg border text-blue-600 font-medium hover:border-blue-600'>
-                    ✭ write and review products
-                </button>
-                <ReviewList />
-            </div>
-
+            <ReviewList reviews={data?.reviews} />
             <hr className='border-b my-10' />
-
-            {/* Product Related */}
-            <div className='max-w-screen-lg mx-auto p-2'>
-                <ProductList checkStatus={loading} products={categories} name='You might also like' />
-            </div>
-        </>
+            <ReviewForm id={id} />
+            <hr className='border-b my-10' />
+            <ProductList products={data?.related} name='You might also like' />
+        </div>
     );
 };
 

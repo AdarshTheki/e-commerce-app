@@ -16,10 +16,11 @@ const CartPage = () => {
         [cart]
     );
 
-    if (!items || items.length === 0) return <ProductEmpty />;
+    if (!items || items.length === 0)
+        return <ProductEmpty message='Your cart is empty' to='/category/mens-shoes' />;
 
     return (
-        <div className='min-h-screen md:flex justify-between gap-5 w-full'>
+        <div className='min-h-screen'>
             <Cart carts={cart} saveItems={filterCart} />
             <Checkout carts={cart} totals={totals} />
         </div>
