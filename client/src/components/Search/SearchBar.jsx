@@ -8,7 +8,6 @@ export default function SearchBart() {
     const [open, setOpen] = useState(false);
     const dropdownRef = React.useRef(null);
     const [query, setQuery] = React.useState('');
-    const { data } = useSearchQuery(query);
 
     React.useEffect(() => {
         const handleClickOutside = (event) => {
@@ -42,7 +41,7 @@ export default function SearchBart() {
                 <div className='inset-0 fixed z-50 bg-black bg-opacity-50 flex items-center justify-center'>
                     <div
                         ref={dropdownRef}
-                        className='max-w-[600px] relative h-3/4 bg-white rounded-lg shadow-lg overflow-y-auto m-2'>
+                        className='max-w-[850px] relative h-3/4 bg-white rounded-lg shadow-lg overflow-y-auto m-2'>
                         <form
                             onSubmit={(e) => {
                                 e.preventDefault();
@@ -67,14 +66,8 @@ export default function SearchBart() {
                                 Search
                             </button>
                         </form>
-                        <p className='py-2 pl-5'>
-                            {query !== ''
-                                ? `Searching result is "${query}"`
-                                : 'Top searching products'}
-                        </p>
                         {/* Search Result */}
-                        <SearchResults searchResults={data} />
-                        <p className='py-2 pl-5'>Top Products</p>
+                        <SearchResults query={query} />
                         {/* Top Searching */}
                         <TopSearching />
                     </div>

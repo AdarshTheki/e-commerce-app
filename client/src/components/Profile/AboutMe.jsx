@@ -25,8 +25,8 @@ export default function AboutMe() {
     ];
     return (
         <main className='text-gray-700 space-y-2'>
-            <section className='bg-white p-4 rounded-lg shadow-lg space-y-3'>
-                <div className='flex items-center gap-10'>
+            <section className='bg-white p-4 shadow-lg'>
+                <div className='flex flex-col sm:flex-row items-center gap-10'>
                     <img
                         src='https://res.cloudinary.com/dlf3lb48n/image/upload/v1724435726/i0t6x5otv6fenzm73bck.jpg'
                         alt='adarshverma'
@@ -72,6 +72,8 @@ export default function AboutMe() {
                         </li>
                     </ul>
                 </div>
+            </section>
+            <section className='bg-white p-4 shadow-lg'>
                 <h2 className='font-bold'>About me</h2>
                 <p>
                     With one year of experience as a front-end programmer specializing in Javascript
@@ -83,8 +85,8 @@ export default function AboutMe() {
                     ensuring customer satisfaction.
                 </p>
             </section>
-            <section className='sm:flex gap-5'>
-                <div className='flex-1 bg-white p-4 rounded-lg shadow-lg'>
+            <section className='flex flex-col sm:flex-row gap-2'>
+                <div className='flex-1 bg-white p-4 shadow-lg'>
                     <h2 className='py-2 font-bold'>Skill</h2>
                     <div className=' flex flex-wrap gap-2'>
                         {skills.map((item) => (
@@ -96,7 +98,7 @@ export default function AboutMe() {
                         ))}
                     </div>
                 </div>
-                <div className='flex-1 bg-white p-4 rounded-lg shadow-lg'>
+                <div className='flex-1 bg-white p-4 shadow-lg'>
                     <h2 className='py-2 font-bold'>Hobbies</h2>
                     <div className=' flex flex-wrap gap-2'>
                         {hobbies.map((item) => (

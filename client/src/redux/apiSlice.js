@@ -104,6 +104,9 @@ export const apiSlice = createApi({
             }),
         }),
         // Product Review Queries
+        getReviews: builder.query({
+            query: () => '/reviews',
+        }),
         getReviewById: builder.query({
             query: (id) => `/reviews/review/${id}`,
         }),
@@ -134,6 +137,7 @@ export const { useOrderQuery, useCheckoutMutation, useHandleWishlistMutation } =
 
 // Reviews
 export const {
+    useGetReviewsQuery,
     useGetReviewByIdQuery,
     useHandleAddReviewMutation,
     useHandleUpdateReviewMutation,

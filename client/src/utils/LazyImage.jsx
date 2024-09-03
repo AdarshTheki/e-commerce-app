@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const LazyImage = ({ src, alt, ...props }) => {
+const LazyImage = ({ src, className = '', alt = 'img', ...props }) => {
     const [isLoaded, setIsLoaded] = useState(false);
     const imgRef = useRef(null);
 
@@ -32,7 +32,7 @@ const LazyImage = ({ src, alt, ...props }) => {
             ref={imgRef}
             alt={alt}
             {...props}
-            className={`lazy-image ${isLoaded ? 'loaded' : ''}`}
+            className={`lazy-image ${className} ${isLoaded ? 'loaded' : ''}`}
             style={{ opacity: isLoaded ? 1 : 0 }}
         />
     );

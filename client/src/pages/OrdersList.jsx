@@ -32,29 +32,39 @@ function OrderItem({
     const totals = items.reduce((prev, curr) => curr.price * curr.quantity + prev, 0);
 
     return (
-        <div className='py-4 px-8 bg-white shadow'>
+        <div className='py-4 px-8 bg-white hover:shadow'>
             <div className='flex items-center justify-between'>
-                <h2 className='capitalize font-bold text-blue-600'>{username}</h2>
+                <h2 className='capitalize font-bold text-blue-600 text-lg hover:underline cursor-pointer'>
+                    {username}
+                </h2>
                 <p className='text-sm'>{new Date(createdAt).toDateString()}</p>
             </div>
-            <p>
-                <strong>Email: </strong>
-                {email}
-            </p>
-            <p>
-                <strong>Address: </strong>
-                {address}
-            </p>
-            <p className='mb-2'>
-                <strong>Total: </strong>
-                {formatPrice(totals / 80)}
-            </p>
-            <strong>Item lists:</strong>
-            <ul className='list-disc list-inside'>
-                {items.map((item) => (
-                    <li key={item._id}>{item.name}</li>
-                ))}
-            </ul>
+            <table>
+                <tr>
+                    <td className='px-2'>Email</td>
+                    <td className='px-2'>:</td>
+                    <td className='px-2'>{email}</td>
+                </tr>
+                <tr>
+                    <td className='px-2'>Address</td>
+                    <td className='px-2'>:</td>
+                    <td className='px-2'>{address}</td>
+                </tr>
+                <tr>
+                    <td className='px-2'>Total</td>
+                    <td className='px-2'>:</td>
+                    <td className='px-2'>{formatPrice(totals / 80)}</td>
+                </tr>
+            </table>
+            <tr>
+                <td className='px-2'>Product</td>
+                <td className='px-2'>:</td>
+                <td className='px-2'>
+                    {items.map((item) => (
+                        <p key={item._id}>{item.name}</p>
+                    ))}
+                </td>
+            </tr>
         </div>
     );
 }
