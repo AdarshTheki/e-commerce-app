@@ -7,4 +7,4 @@ connectDB()
             console.log(`Running Ports http://localhost:${process.env.PORT}`);
         });
     })
-    .catch((err) => console.log("MongoDB Connection Failed !! ", err?.message));
+    .catch((err) => console.log("MongoDB Connection Error !! ", err?.message));
