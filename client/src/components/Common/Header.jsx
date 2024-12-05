@@ -19,23 +19,40 @@ import { categories } from '../../utils';
 
 const Header = () => {
     return (
-        <div className='sticky bg-white w-full h-[10vh] sm:px-10 px-4 items-center justify-between flex top-0 z-40 shadow'>
-            {/* Logo */}
+        <div className='sticky bg-white w-full sm:px-10 px-4 top-0 z-40 shadow'>
             <NavLink
-                to='https://github.com/AdarshTheki'
-                target='__blank'
-                className='flex items-center sm:gap-2'>
-                <img src={'/logo.webp'} alt='logo' />
-                <p className='font-semibold sm:text-lg'>Ecommerce</p>
+                className='flex items-center justify-end text-sm px-10 py-1 hover:opacity-70'
+                to='/'>
+                Track Order &ensp;|&ensp; Help Center
             </NavLink>
+            <div className='flex items-center justify-between'>
+                {/* Logo */}
+                <NavLink
+                    to='https://github.com/AdarshTheki'
+                    target='__blank'
+                    className='flex items-center sm:gap-2'>
+                    <img src={'/logo.webp'} alt='logo' />
+                    <p className='font-semibold sm:text-lg'>Ecommerce</p>
+                </NavLink>
 
-            {/* Search Bar */}
-            <SearchBart />
+                {/* brands */}
+                <ul className='flex items-center justify-center gap-4 text-lg font-medium'>
+                    <li>one</li>
+                    <li>one</li>
+                    <li>one</li>
+                    <li>one</li>
+                    <li>one</li>
+                </ul>
 
-            {/* User */}
-            <LoginUser />
-
-            <MenuItems />
+                {/* Search Bar */}
+                <SearchBart />
+                
+                {/* User */}
+                <div>
+                    <LoginUser />
+                    <p>card</p>
+                </div>
+            </div>
         </div>
     );
 };
