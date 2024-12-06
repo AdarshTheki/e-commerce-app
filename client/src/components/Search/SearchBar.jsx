@@ -26,12 +26,12 @@ export default function SearchBart() {
 
     return (
         <div>
-            <div
+            <button
                 onClick={toggle}
-                className='border-2 hidden text-gray-600 sm:flex cursor-pointer hover:border-blue-600 items-center gap-3 rounded-lg px-5 py-2 w-[300px]'>
+                className='border border-gray-400 hover:shadow bg-gray-50 hidden text-gray-600 sm:flex cursor-pointer hover:border-rose-600 items-center gap-3 rounded px-5 py-1.5 lg:w-[300px] md:w-[200px]'>
                 <Search size={18} />
-                <span className=''>search</span>
-            </div>
+                <span className=''>search...</span>
+            </button>
             <Search
                 size={26}
                 onClick={toggle}

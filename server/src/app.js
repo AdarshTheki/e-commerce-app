@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import rateLimit from "express-rate-limit";
+
 import { errorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
@@ -14,6 +16,13 @@ app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 app.use(express.static("public"));
 
 app.use(cookieParser());
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // max 100 requests per windowMs
+});
+
+app.use(limiter);
 
 // import all routing files
 import healthCheckRoute from "./routes/healthCheck.router.js";

@@ -9,7 +9,6 @@ import Cart from './Cart/Cart';
 import Checkout from './Cart/Checkout';
 
 // home
-import Banner from './Home/Banner';
 import Customer from './Home/Customer';
 import ItemList from './Home/ItemList';
 import FAQ from './Home/FAQ';
@@ -39,7 +38,6 @@ export {
     SearchBart,
     Cart,
     Checkout,
-    Banner,
     Customer,
     ItemList,
     FAQ,

@@ -57,14 +57,7 @@ const Item = ({ _id, thumbnail, discount, rating, title, price }) => {
             </div>
 
             <div className='sm:h-[180px] h-[100px] overflow-hidden bg-white'>
-                <LazyImage
-                    src={
-                        thumbnail
-                            ? thumbnail
-                            : 'https://dummyjson.com/image/400x300/aaaaaa/ffffff?text=Not+Found'
-                    }
-                    alt={title}
-                />
+                <LazyImage src={thumbnail} alt={title} />
             </div>
             <div className='text-gray-800 grid gap-1 p-4'>
                 <Link
@@ -75,9 +68,7 @@ const Item = ({ _id, thumbnail, discount, rating, title, price }) => {
                 </Link>
                 <StarRating rating={rating} />
                 <p className='space-x-2'>
-                    <span className='font-bold'>
-                        {formatPrice(price)}
-                    </span>
+                    <span className='font-bold'>{formatPrice(price)}</span>
                     <span className='text-rose-600 font-medium bg-red-100 text-xs px-2 py-0.5 rounded-xl'>
                         {discount}%
                     </span>

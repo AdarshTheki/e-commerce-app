@@ -2,9 +2,37 @@
 import { NavLink } from 'react-router-dom';
 import { ProductItem } from '../index';
 import { useCategoryQuery } from '../../redux/apiSlice';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+
+const Box = () => {
+    return (
+        <>
+            <SkeletonTheme>
+                <Skeleton count={1} height={200} width='100%' />
+                <Skeleton count={1} height={12} width={50} />
+                <Skeleton count={1} height={15} width='80%' />
+                <Skeleton count={1} height={10} width='60%' />
+                <Skeleton count={1} height={10} width='100%' />
+            </SkeletonTheme>
+        </>
+    );
+};
 
 const ItemList = ({ name = '', category = '' }) => {
     const { data, isLoading } = useCategoryQuery(category);
+
+    if (!data || isLoading) {
+        return (
+            <div className='grid grid-cols-4 gap-5 container mx-auto'>
+                {Array.from({ length: 4 }, (i, index) => (
+                    <p key={index}>
+                        <Box />
+                    </p>
+                ))}
+            </div>
+        );
+    }
+
     return (
         <div className='flex flex-col gap-4 items-center justify-center'>
             <h2 className='uppercase sm:text-3xl text-xl font-semibold' style={{ fontWeight: 900 }}>

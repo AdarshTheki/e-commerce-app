@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Skeleton from 'react-loading-skeleton';
 
 const LazyImage = ({ src, className = '', alt = 'img', ...props }) => {
     const [isLoaded, setIsLoaded] = useState(false);
@@ -26,6 +27,10 @@ const LazyImage = ({ src, className = '', alt = 'img', ...props }) => {
             }
         };
     }, [src]);
+
+    if (!src) {
+        return <Skeleton width={'100%'} height={'100%'} />;
+    }
 
     return (
         <img

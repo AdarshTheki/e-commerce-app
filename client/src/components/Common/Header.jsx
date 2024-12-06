@@ -14,44 +14,68 @@ import {
     Menu,
     ShoppingBag,
     ShoppingCart,
+    UserRound,
 } from 'lucide-react';
 import { categories } from '../../utils';
 
 const Header = () => {
     return (
-        <div className='sticky bg-white w-full sm:px-10 px-4 top-0 z-40 shadow'>
-            <NavLink
-                className='flex items-center justify-end text-sm px-10 py-1 hover:opacity-70'
-                to='/'>
-                Track Order &ensp;|&ensp; Help Center
-            </NavLink>
-            <div className='flex items-center justify-between'>
-                {/* Logo */}
-                <NavLink
-                    to='https://github.com/AdarshTheki'
-                    target='__blank'
-                    className='flex items-center sm:gap-2'>
-                    <img src={'/logo.webp'} alt='logo' />
-                    <p className='font-semibold sm:text-lg'>Ecommerce</p>
+        <div className='sticky bg-white w-full top-0 z-40 shadow'>
+            <h4 className='text-right'>
+                <NavLink className='text-sm pt-1 hover:opacity-70' to='/'>
+                    Track Order &ensp;|&ensp;
                 </NavLink>
+                <NavLink className='text-sm pr-10 hover:opacity-70' to='/'>
+                    Help Center
+                </NavLink>
+            </h4>
+            <div className='container mt-2 mx-auto flex items-start justify-between'>
+                {/* Logo */}
+                <div className='flex items-start gap-5 lg:gap-12 md:gap-8'>
+                    <NavLink
+                        to='https://github.com/AdarshTheki'
+                        target='__blank'
+                        className='text-4xl font-thin text-rose-600'>
+                        <h3>Tira</h3>
+                    </NavLink>
 
-                {/* brands */}
-                <ul className='flex items-center justify-center gap-4 text-lg font-medium'>
-                    <li>one</li>
-                    <li>one</li>
-                    <li>one</li>
-                    <li>one</li>
-                    <li>one</li>
-                </ul>
-
-                {/* Search Bar */}
-                <SearchBart />
-                
-                {/* User */}
-                <div>
-                    <LoginUser />
-                    <p>card</p>
+                    {/* brands */}
+                    <ul className='flex font-light items-center justify-between gap-5 lg:gap-12 md:gap-8 capitalize'>
+                        {['brand', 'offers', 'top seals', 'category'].map((i) => (
+                            <NavLink
+                                to={i}
+                                key={i}
+                                className='hover:text-rose-600 border-b pb-5 border-b-transparent hover:border-b-rose-600 capitalize'>
+                                {i}
+                            </NavLink>
+                        ))}
+                    </ul>
                 </div>
+                <div className='flex items-center gap-5 lg:gap-12 md:gap-8'>
+                    {/* Search Bar */}
+                    <SearchBart />
+
+                    {/* User */}
+                    <div className='flex items-center justify-center gap-5'>
+                        <NavLink to={'/user'}>
+                            <UserRound />
+                        </NavLink>
+                        <NavLink to={'/cart'}>
+                            <ShoppingCart />
+                        </NavLink>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div className='flex justify-start  overflow-hidden md:gap-5 gap-2 container mx-auto pt-3'>
+                {categories.map((i) => (
+                    <NavLink
+                        to={i}
+                        key={i}
+                        className='hover:text-rose-600 border-b pb-3 border-b-transparent hover:border-b-rose-600 capitalize'>
+                        {i.split('-')[1] || i.split('-')[0]}
+                    </NavLink>
+                ))}
             </div>
         </div>
     );

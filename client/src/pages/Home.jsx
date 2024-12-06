@@ -1,11 +1,12 @@
 /* eslint-disable react/prop-types */
-import { Banner, ItemList, Customer, FAQ } from '../components';
+import { ItemList, Customer, FAQ } from '../components';
 
-const ProductSingle = () => {
+const HomePage = () => {
     return (
         <div className='w-full'>
-            <Banner />
-            <div className='max-w-screen-lg mx-auto space-y-8 mt-8 px-2'>
+            <img src='/banner-2.jpg' alt='banner_image' className='w-full object-contain' />
+
+            <div className='mx-auto space-y-8 mt-8 px-2'>
                 <ItemList name='new arrivals' category='furniture' />
                 <ItemList name='top selling' category='womens-bags' />
                 <div className=' space-y-5'>
@@ -17,4 +18,4 @@ const ProductSingle = () => {
     );
 };
 
-export default ProductSingle;
+export default HomePage;

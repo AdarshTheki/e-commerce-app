@@ -1,7 +1,7 @@
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
-export const errorHandler = asyncHandler(async (err, req, res, next) => {
+export const errorHandler = async (err, req, res, next) => {
     if (err instanceof ApiError) {
         res.status(err.statusCode).json({
             success: err.success,
@@ -15,4 +15,4 @@ export const errorHandler = asyncHandler(async (err, req, res, next) => {
             message: "Internal Server Error! middleware",
         });
     }
-});
+};

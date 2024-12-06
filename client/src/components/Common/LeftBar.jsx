@@ -16,7 +16,7 @@ const LeftBar = () => {
     const [category, setCategory] = useState(false);
 
     return (
-        <div className='hidden sm:block h-[90vh] gutter overflow-y-auto min-w-[200px] max-w-[250px] p-5 border-r'>
+        <div className='hidden sm:block h-screen gutter overflow-y-auto min-w-[200px] max-w-[250px] p-5 border-r'>
             <ul className='grid gap-5 items-center justify-center capitalize w-full font-medium text-gray-700'>
                 <NavLink to={'/'} className='flex items-center gap-2 hover:text-blue-600'>
                     <Home size={18} />
