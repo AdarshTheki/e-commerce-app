@@ -5,9 +5,7 @@ import {
     singleProduct,
     getAllProducts,
     getAllCategories,
-    getProductsByCategory,
-    productSearch,
-    brands,
+    getAllBrands,
     addProduct,
     updateProduct,
     deleteProduct,
@@ -15,16 +13,14 @@ import {
 
 const router = Router();
 
+// all of brand, category and search by products with query
 router.route("/").get(getAllProducts);
 router.route("/categories").get(getAllCategories);
-router.route("/category/:categoryId").get(getProductsByCategory);
-router.route("/search").get(productSearch);
+router.route("/brands").get(getAllBrands);
 router.route("/id/:productId").get(singleProduct);
-router.route("/brands").get(brands);
-
-router.use(verifyJWT);
 
 router.route("/user/add").post(
+    verifyJWT,
     upload.fields([
         { name: "thumbnail", maxCount: 1 },
         { name: "images", maxCount: 4 },
@@ -32,12 +28,13 @@ router.route("/user/add").post(
     addProduct
 );
 router.route("/user/:productId").patch(
+    verifyJWT,
     upload.fields([
         { name: "thumbnail", maxCount: 1 },
         { name: "images", maxCount: 4 },
     ]),
     updateProduct
 );
-router.route("/user/:productId").delete(deleteProduct);
+router.route("/user/:productId").delete(verifyJWT, deleteProduct);
 
 export default router;

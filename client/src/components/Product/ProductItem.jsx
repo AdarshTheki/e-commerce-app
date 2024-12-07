@@ -25,7 +25,7 @@ const Item = ({ _id, thumbnail, discount, rating, title, price }) => {
     };
 
     return (
-        <div className='bg-white border border-gray-200 relative capitalize rounded-lg grid items-stretch'>
+        <div className='border border-gray-200 hover:border-gray-400 relative capitalize rounded-lg grid items-stretch'>
             <div className='absolute z-20 top-4 right-4'>
                 {isLoading ? (
                     <div role='status'>
@@ -63,11 +63,14 @@ const Item = ({ _id, thumbnail, discount, rating, title, price }) => {
                 <Link
                     title={title}
                     to={`/product/${_id}`}
-                    className='line-clamp-1 text-blue-700 hover:text-blue-900 font-bold'>
+                    className='line-clamp-2 min-h-[60px] text-blue-700 hover:text-blue-900 font-medium text-xl'>
                     {title}
                 </Link>
-                <StarRating rating={rating} />
-                <p className='space-x-2'>
+                <div className='flex justify-between'>
+                    <StarRating rating={rating} />
+                    <p>{rating?.toString().slice(0, 3)}</p>
+                </div>
+                <p className='flex justify-between'>
                     <span className='font-bold'>{formatPrice(price)}</span>
                     <span className='text-rose-600 font-medium bg-red-100 text-xs px-2 py-0.5 rounded-xl'>
                         {discount}%

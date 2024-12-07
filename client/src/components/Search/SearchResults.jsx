@@ -1,17 +1,18 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { LazyImage } from '../../utils';
-import { useSearchQuery } from '../../redux/apiSlice';
+import { useProductsQuery } from '../../redux/apiSlice';
 
 export default function SearchResults({ query = '' }) {
-    const { data } = useSearchQuery(query);
+    const { data } = useProductsQuery({ search: query });
+
     return (
         <div className='sm:px-5'>
             <p className='font-semibold text-lg m-2'>
                 {query !== '' ? `Searching result is "${query}"` : 'Top searching products'}
             </p>
             {data &&
-                data?.map((item) => (
+                data?.docs?.map((item) => (
                     <NavLink
                         to={`/product/${item._id}`}
                         key={item._id}

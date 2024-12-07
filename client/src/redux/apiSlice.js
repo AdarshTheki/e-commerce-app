@@ -21,8 +21,8 @@ export const apiSlice = createApi({
     baseQuery,
     endpoints: (builder) => ({
         products: builder.query({
-            query: ({ limit = 20, page = 1, sortBy = '_id' }) =>
-                `/products?limit=${limit}&page=${page}&sortBy=${sortBy}`,
+            query: ({ limit = 20, page = 1, brand = '', category = '', search = '' }) =>
+                `/products?limit=${limit}&page=${page}&brand=${brand}&category=${category}&search=${search}`,
         }),
         brandList: builder.query({
             query: () => '/products/brands',
@@ -30,12 +30,7 @@ export const apiSlice = createApi({
         categoryList: builder.query({
             query: () => '/products/categories',
         }),
-        category: builder.query({
-            query: (category) => `/products/category/${category}`,
-        }),
-        search: builder.query({
-            query: (search) => `/products/search?q=${search}`,
-        }),
+
         // Auth Queries
         me: builder.query({
             query: () => `/auth/me`,
@@ -85,6 +80,7 @@ export const apiSlice = createApi({
                 body: JSON.stringify({ url }),
             }),
         }),
+
         // Order Queries
         order: builder.query({
             query: () => `/orders/all`,
@@ -96,6 +92,7 @@ export const apiSlice = createApi({
                 body: item,
             }),
         }),
+
         // Wishlist Queries
         handleWishlist: builder.mutation({
             query: (productId) => ({
@@ -103,6 +100,7 @@ export const apiSlice = createApi({
                 method: 'POST',
             }),
         }),
+
         // Product Review Queries
         getReviews: builder.query({
             query: () => '/reviews',
@@ -148,9 +146,7 @@ export const {
 export const {
     useBrandListQuery, // check
     useCategoryListQuery, // check
-    useCategoryQuery,
     useProductsQuery,
-    useSearchQuery,
 } = apiSlice;
 
 // Auth

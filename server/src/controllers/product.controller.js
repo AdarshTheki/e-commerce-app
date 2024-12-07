@@ -27,49 +27,65 @@ const singleProduct = asyncHandler(async (req, res, next) => {
 });
 
 const getAllProducts = asyncHandler(async (req, res, next) => {
-    let { page = 1, limit = 20, sortBy = "_id" } = req.query;
+    const {
+        page = 1,
+        limit = 20,
+        brand = "",
+        category = "",
+        search = "",
+    } = req.query;
 
-    page = parseInt(page);
-    limit = parseInt(limit);
+    const options = {
+        page: Number(page),
+        limit: Number(limit),
+    };
+
+    const project = {
+        $project: {
+            _id: 1,
+            title: 1,
+            rating: 1,
+            category: 1,
+            brand: 1,
+            discount: 1,
+            price: 1,
+            thumbnail: 1,
+        },
+    };
+
+    let products;
 
     try {
-        const products = await Product.aggregate([
-            {
-                $facet: {
-                    products: [
-                        { $sort: { [`${sortBy}`]: 1 } },
-                        { $skip: (page - 1) * limit },
-                        { $limit: limit },
-                        {
-                            $project: {
-                                _id: 1,
-                                title: 1,
-                                rating: 1,
-                                category: 1,
-                                discount: 1,
-                                price: 1,
-                                images: 1,
-                            },
-                        },
-                    ],
-                    totals: [{ $count: "count" }],
+        if (brand) {
+            products = Product.aggregate([
+                { $match: { brand: brand } },
+                project,
+            ]);
+        } else if (category) {
+            products = Product.aggregate([
+                { $match: { category: category } },
+                project,
+            ]);
+        } else if (search) {
+            let regex = new RegExp(search, "i");
+            products = Product.aggregate([
+                {
+                    $match: {
+                        $or: [
+                            { title: { $regex: regex } },
+                            { brand: { $regex: regex } },
+                            { category: { $regex: regex } },
+                        ],
+                    },
                 },
-            },
-        ]);
-
-        if (products.length === 0) {
-            return res
-                .status(204)
-                .json({ products: [], message: "products does not exists" });
+                project,
+            ]);
+        } else {
+            products = Product.aggregate([project]);
         }
 
-        return res.status(200).json({
-            products: products[0].products,
-            totals:
-                products[0].totals.length > 0 ? products[0].totals[0].count : 0,
-            skip: (page - 1) * limit,
-            limit: limit,
-        });
+        const results = await Product.aggregatePaginate(products, options);
+        return res.status(200).json(results);
     } catch (error) {
         next(error);
     }
@@ -84,41 +100,9 @@ const getAllCategories = asyncHandler(async (req, res, next) => {
     }
 });
 
-const brands = asyncHandler(async (req, res, next) => {
+const getAllBrands = asyncHandler(async (req, res, next) => {
     try {
         const results = await Product.distinct("brand");
-        return res.status(200).json(results);
-    } catch (error) {
-        next(error);
-    }
-});
-
-const getProductsByCategory = asyncHandler(async (req, res, next) => {
-    try {
-        const { categoryId } = req.params;
-        const results = await Product.find({ category: categoryId });
-
-        return res.status(200).json(results);
-    } catch (error) {
-        next(error);
-    }
-});
-
-const productSearch = asyncHandler(async (req, res, next) => {
-    try {
-        const { q } = req.query;
-        const results = await Product.find({
-            $or: [
-                { title: { $regex: new RegExp(q, "i") } },
-                { brand: { $regex: new RegExp(q, "i") } },
-                { category: { $regex: new RegExp(q, "i") } },
-            ],
-        }).limit(10);
-
-        if (results.length === 0) {
-            throw new ApiError(500, "items does not found");
-        }
-
         return res.status(200).json(results);
     } catch (error) {
         next(error);
@@ -236,9 +220,7 @@ export {
     singleProduct,
     getAllProducts,
     getAllCategories,
-    getProductsByCategory,
-    productSearch,
-    brands,
+    getAllBrands,
     updateProduct,
     deleteProduct,
 };

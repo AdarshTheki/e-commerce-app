@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes, Outlet } from 'react-router-dom
 
 import {
     Cart,
-    Category,
+    ProductListing,
     Home,
     OrderSuccess,
     OrdersList,
@@ -47,7 +47,7 @@ const App = () => {
                 <Header />
                 <Routes>
                     <Route path='/' element={<Home />} />
-                    <Route path='/category/:category' element={<Category />} />
+                    <Route path='/products' element={<ProductListing />} />
                     <Route path='/product/:id' element={<ProductSingle />} />
                     <Route path='/order/success' element={<OrderSuccess />} />
                     <Route path='/order/history' element={<OrdersList />} />

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { ArrowLeft, Search } from 'lucide-react';
 import TopSearching from './TopSearching';
 import SearchResults from './SearchResults';
-import { useSearchQuery } from '../../redux/apiSlice';
 
 export default function SearchBart() {
     const [open, setOpen] = useState(false);

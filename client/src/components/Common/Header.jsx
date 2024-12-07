@@ -1,9 +1,11 @@
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import SearchBart from '../Search/SearchBar';
 import { NavLink } from 'react-router-dom';
-import { setLogout } from '../../redux/authSlice';
 import toast from 'react-hot-toast';
+
+import SearchBart from '../Search/SearchBar';
+import { setLogout } from '../../redux/authSlice';
+import { categories } from '../../utils';
 import {
     ChevronDown,
     ChevronUp,
@@ -16,7 +18,6 @@ import {
     ShoppingCart,
     UserRound,
 } from 'lucide-react';
-import { categories } from '../../utils';
 
 const Header = () => {
     return (
@@ -32,10 +33,7 @@ const Header = () => {
             <div className='container mt-2 mx-auto flex items-start justify-between'>
                 {/* Logo */}
                 <div className='flex items-start gap-5 lg:gap-12 md:gap-8'>
-                    <NavLink
-                        to='https://github.com/AdarshTheki'
-                        target='__blank'
-                        className='text-4xl font-thin text-rose-600'>
+                    <NavLink to='/' className='text-4xl font-thin text-rose-600'>
                         <h3>Tira</h3>
                     </NavLink>
 
@@ -67,10 +65,10 @@ const Header = () => {
                 </div>
             </div>
             <hr />
-            <div className='flex justify-start  overflow-hidden md:gap-5 gap-2 container mx-auto pt-3'>
-                {categories.map((i) => (
+            <div className='flex justify-start overflow-hidden md:gap-5 gap-2 container mx-auto pt-3'>
+                {categories?.map((i) => (
                     <NavLink
-                        to={i}
+                        to={`/products?category=${i}`}
                         key={i}
                         className='hover:text-rose-600 border-b pb-3 border-b-transparent hover:border-b-rose-600 capitalize'>
                         {i.split('-')[1] || i.split('-')[0]}

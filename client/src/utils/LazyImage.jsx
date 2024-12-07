@@ -6,30 +6,24 @@ const LazyImage = ({ src, className = '', alt = 'img', ...props }) => {
     const imgRef = useRef(null);
 
     useEffect(() => {
-        const observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    const imgElement = entry.target;
-                    imgElement.src = src;
-                    imgElement.onload = () => setIsLoaded(true);
-                    observer.unobserve(imgElement);
-                }
-            });
+        if (!src || !imgRef.current) return;
+
+        const imgElement = imgRef.current;
+        const observer = new IntersectionObserver(([entry], obs) => {
+            if (entry.isIntersecting) {
+                imgElement.src = src;
+                imgElement.onload = () => setIsLoaded(true);
+                obs.unobserve(imgElement);
+            }
         });
 
-        if (imgRef.current) {
-            observer.observe(imgRef.current);
-        }
+        observer.observe(imgElement);
 
-        return () => {
-            if (imgRef.current) {
-                observer.unobserve(imgRef.current);
-            }
-        };
+        return () => observer.disconnect();
     }, [src]);
 
     if (!src) {
-        return <Skeleton width={'100%'} height={'100%'} />;
+        return <Skeleton borderRadius='5%' width={'100%'} height={'100%'} />;
     }
 
     return (
@@ -37,8 +31,8 @@ const LazyImage = ({ src, className = '', alt = 'img', ...props }) => {
             ref={imgRef}
             alt={alt}
             {...props}
-            className={`lazy-image ${className} ${isLoaded ? 'loaded' : ''}`}
-            style={{ opacity: isLoaded ? 1 : 0 }}
+            className={`lazy-image rounded-xl ${className} ${isLoaded ? 'loaded' : ''}`}
+            style={{ opacity: isLoaded ? 1 : 0, transition: 'opacity 0.3s ease-in-out' }}
         />
     );
 };

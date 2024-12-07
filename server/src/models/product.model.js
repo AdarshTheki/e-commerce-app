@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import aggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const productSchema = new Schema({
     title: { type: String, required: true },
@@ -12,5 +13,7 @@ const productSchema = new Schema({
     thumbnail: { type: String },
     images: [{ type: String }], // Array of cloudinary image URLs
 });
+
+productSchema.plugin(aggregatePaginate);
 
 export const Product = mongoose.model("Product", productSchema);
