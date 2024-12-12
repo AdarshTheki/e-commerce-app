@@ -30,7 +30,7 @@ const Header = () => {
                     Help Center
                 </NavLink>
             </h4>
-            <div className='container mt-2 mx-auto flex items-start justify-between'>
+            <div className='container mt-2   mx-auto flex items-start justify-between'>
                 {/* Logo */}
                 <div className='flex items-start gap-5 lg:gap-12 md:gap-8'>
                     <NavLink to='/' className='text-4xl font-thin text-rose-600'>
