@@ -4,20 +4,9 @@ import jwt from "jsonwebtoken";
 
 const userSchema = new Schema(
     {
-        username: {
-            type: String,
-            required: [true, "Username is Required!"],
-            unique: true,
-            lowercase: true,
-            trim: true,
-            index: true,
-        },
-        email: {
-            type: String,
-            required: [true, "Email is unique & required!"],
-            lowercase: true,
-        },
-        password: { type: String, required: [true, "Password is Required!"] },
+        username: String,
+        email: String,
+        password: String,
         role: {
             type: String,
             enum: ["customer", "admin", "user"],
@@ -29,9 +18,8 @@ const userSchema = new Schema(
                 ref: "Product",
             },
         ],
-        avatar: { type: String }, // cloudinary url
-        coverImage: { type: String }, // cloudinary url
-        refreshToken: { type: String },
+        avatar: String, // cloudinary url
+        refreshToken: String,
     },
     { timestamps: true }
 );

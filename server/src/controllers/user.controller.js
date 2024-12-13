@@ -56,6 +56,7 @@ const signUp = asyncHandler(async (req, res, next) => {
         }
         return res.status(200).json(createdUser);
     } catch (error) {
+        console.log(error?.message);
         next(error);
     }
 });
@@ -125,7 +126,8 @@ const logout = asyncHandler(async (req, res, next) => {
 const getRefreshToken = asyncHandler(async (req, res, next) => {
     try {
         const incomingRefreshToken =
-            req.cookies.refreshToken || req.body.refreshToken;
+            req?.cookies?.refreshToken || req?.body?.refreshToken;
+
         if (!incomingRefreshToken) {
             throw new ApiError(401, "Un-Authorize Access Token Request");
         }
@@ -135,14 +137,16 @@ const getRefreshToken = asyncHandler(async (req, res, next) => {
             process.env.REFRESH_TOKEN_SECRET
         );
 
-        const user = await User.findById(decodedToken?._id);
+        const user = await User.findById(decodedToken?._id).select(
+            "-password -refreshToken"
+        );
         if (!user) {
             throw new ApiError(401, "User :: Invalid Refresh Token");
         }
 
-        if (incomingRefreshToken !== user?.refreshToken) {
-            throw new ApiError(401, "User :: Token is Expired");
-        }
+        // if (incomingRefreshToken !== user?.refreshToken) {
+        //     throw new ApiError(401, "User :: Token is Expired");
+        // }
 
         const { accessToken, refreshToken } = await createToken(user._id);
 
@@ -203,7 +207,7 @@ const updateUserAvatar = asyncHandler(async (req, res, next) => {
                 },
             },
             { new: true }
-        ).select("-password");
+        ).select("-password -refreshToken");
 
         const url = req?.user?.avatar;
         if (url) {
@@ -212,9 +216,7 @@ const updateUserAvatar = asyncHandler(async (req, res, next) => {
             await removeSingleImg(publicId);
         }
 
-        return res
-            .status(200)
-            .json({ user, message: "Avatar image updated successfully" });
+        return res.status(200).json(user);
     } catch (error) {
         next(error);
     }
@@ -238,73 +240,14 @@ const removeUserAvatar = asyncHandler(async (req, res, next) => {
                     },
                 },
                 { new: true }
-            ).select("-password");
+            ).select("-password -refreshToken");
 
-            return res.status(200).json({
-                user,
-                message: "avatar image deleted successfully",
-            });
+            return res.status(200).json(user);
         }
-        return res.status(200).json({
+        return res.status(401).json({
             message: "avatar not deleted ",
+            statusCode: 401,
         });
-    } catch (error) {
-        next(error);
-    }
-});
-
-const removeUserCoverImg = asyncHandler(async (req, res, next) => {
-    try {
-        const url = req?.user?.avatar;
-        if (!url) {
-            throw new ApiError(404, "User avatar url not founded");
-        }
-        const path = url.split("/");
-        const publicId = path[7].split(".")[0];
-        const remove = removeSingleImg(publicId);
-        if (remove) {
-            const user = await User.findByIdAndUpdate(
-                req.user?._id,
-                {
-                    $set: {
-                        coverImage: "",
-                    },
-                },
-                { new: true }
-            ).select("-password");
-
-            return res.status(200).json({
-                user,
-                message: "Cover image deleted successfully",
-            });
-        }
-        return res.status(200).json({
-            message: "Cover image not deleted",
-        });
-    } catch (error) {
-        next(error);
-    }
-});
-
-const updateUserCoverImg = asyncHandler(async (req, res, next) => {
-    try {
-        const coverImageLocalPath = req.file.path;
-        if (!coverImageLocalPath) {
-            throw new ApiError(404, "local cover image not found");
-        }
-        const avatar = await uploadSingleImg(coverImageLocalPath);
-        if (!avatar) {
-            throw new ApiError(400, "Error while uploading on cover image");
-        }
-        const user = await User.findByIdAndUpdate(
-            req.user?._id,
-            { $set: { coverImage: avatar } },
-            { new: true }
-        ).select("-password");
-
-        return res
-            .status(200)
-            .json({ user, message: "Cover image updated successfully" });
     } catch (error) {
         next(error);
     }
@@ -357,7 +300,5 @@ export {
     updateUser,
     wishlist,
     updateUserAvatar,
-    updateUserCoverImg,
     removeUserAvatar,
-    removeUserCoverImg,
 };

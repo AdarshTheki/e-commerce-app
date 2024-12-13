@@ -4,8 +4,6 @@ import { upload } from "../middlewares/multer.middleware.js";
 import {
     singleProduct,
     getAllProducts,
-    getAllCategories,
-    getAllBrands,
     addProduct,
     updateProduct,
     deleteProduct,
@@ -15,11 +13,10 @@ const router = Router();
 
 // all of brand, category and search by products with query
 router.route("/").get(getAllProducts);
-router.route("/categories").get(getAllCategories);
-router.route("/brands").get(getAllBrands);
-router.route("/id/:productId").get(singleProduct);
 
-router.route("/user/add").post(
+router.route("/:productId").get(singleProduct);
+
+router.route("/").post(
     verifyJWT,
     upload.fields([
         { name: "thumbnail", maxCount: 1 },
@@ -27,7 +24,8 @@ router.route("/user/add").post(
     ]),
     addProduct
 );
-router.route("/user/:productId").patch(
+
+router.route("/:productId").patch(
     verifyJWT,
     upload.fields([
         { name: "thumbnail", maxCount: 1 },
@@ -35,6 +33,7 @@ router.route("/user/:productId").patch(
     ]),
     updateProduct
 );
-router.route("/user/:productId").delete(verifyJWT, deleteProduct);
+
+router.route("/:productId").delete(verifyJWT, deleteProduct);
 
 export default router;

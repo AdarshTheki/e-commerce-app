@@ -7,10 +7,8 @@ import {
     logout,
     updateUser,
     wishlist,
-    updateUserCoverImg,
     updateUserAvatar,
     removeUserAvatar,
-    removeUserCoverImg,
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -18,7 +16,7 @@ import { upload } from "../middlewares/multer.middleware.js";
 const router = Router();
 
 router.route("/sign-up").post(signUp);
-router.route("/refresh").get(getRefreshToken);
+router.route("/refresh").post(getRefreshToken);
 router.route("/sign-in").post(signIn);
 
 router.use(verifyJWT);
@@ -26,10 +24,6 @@ router.use(verifyJWT);
 router.route("/me").get(getMe);
 router.route("/update").patch(updateUser);
 
-router
-    .route("/cover-image")
-    .patch(upload.single("coverImage"), updateUserCoverImg)
-    .delete(removeUserCoverImg);
 router
     .route("/avatar")
     .patch(upload.single("avatar"), updateUserAvatar)

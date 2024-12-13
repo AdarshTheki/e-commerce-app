@@ -10,8 +10,15 @@ cloudinary.config({
 const uploadMultiImg = async (images = []) => {
     try {
         if (images.length === 0) return [];
+        console.log(
+            "images:",
+            images.map((i) => i?.path)
+        );
         const uploadPromises = images.map((file) =>
-            cloudinary.uploader.upload(file.path, { resource_type: "image" })
+            cloudinary.uploader.upload(file.path, {
+                resource_type: "image",
+                folder: "cartify-demo",
+            })
         );
         const urls = await Promise.all(uploadPromises);
         const result = urls.map((url) => url.secure_url);
@@ -25,10 +32,12 @@ const uploadMultiImg = async (images = []) => {
 
 const uploadSingleImg = async (localFilePath = "") => {
     try {
+        console.log("image path", localFilePath);
         if (!localFilePath) return "";
 
         const res = await cloudinary.uploader.upload(localFilePath, {
             resource_type: "image",
+            folder: "cartify-demo",
         });
         fs.unlinkSync(localFilePath);
         return res.secure_url;
@@ -38,12 +47,15 @@ const uploadSingleImg = async (localFilePath = "") => {
     }
 };
 
-const removeSingleImg = async (publicId = "") => {
+const removeSingleImg = async (url = "") => {
     try {
-        if (!publicId) return "";
+        if (!url) return "";
+
+        const publicId = url.split("/").pop().split(".")[0];
 
         await cloudinary.uploader.destroy(publicId, {
             resource_type: "image",
+            folder: "cartify-demo",
         });
         return true;
     } catch (err) {
@@ -61,7 +73,10 @@ const removeMultiImg = async (images = []) => {
         });
 
         const removePromises = publicIds.map((public_id) =>
-            cloudinary.uploader.destroy(public_id, { resource_type: "image" })
+            cloudinary.uploader.destroy(public_id, {
+                resource_type: "image",
+                folder: "cartify-demo",
+            })
         );
 
         await Promise.all(removePromises);

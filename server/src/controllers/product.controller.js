@@ -3,7 +3,12 @@ import { Product } from "../models/product.model.js";
 import { Review } from "../models/review.mode.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { uploadSingleImg, uploadMultiImg } from "../utils/cloudinary.js";
+import {
+    uploadSingleImg,
+    uploadMultiImg,
+    removeSingleImg,
+    removeMultiImg,
+} from "../utils/cloudinary.js";
 
 const singleProduct = asyncHandler(async (req, res, next) => {
     try {
@@ -27,82 +32,50 @@ const singleProduct = asyncHandler(async (req, res, next) => {
 });
 
 const getAllProducts = asyncHandler(async (req, res, next) => {
-    const {
-        page = 1,
-        limit = 20,
-        brand = "",
-        category = "",
-        search = "",
-    } = req.query;
-
-    const options = {
-        page: Number(page),
-        limit: Number(limit),
-    };
-
-    const project = {
-        $project: {
-            _id: 1,
-            title: 1,
-            rating: 1,
-            category: 1,
-            brand: 1,
-            discount: 1,
-            price: 1,
-            thumbnail: 1,
-        },
-    };
-
-    let products;
-
     try {
-        if (brand) {
-            products = Product.aggregate([
-                { $match: { brand: brand } },
-                project,
-            ]);
-        } else if (category) {
-            products = Product.aggregate([
-                { $match: { category: category } },
-                project,
-            ]);
-        } else if (search) {
-            let regex = new RegExp(search, "i");
-            products = Product.aggregate([
-                {
-                    $match: {
-                        $or: [
-                            { title: { $regex: regex } },
-                            { brand: { $regex: regex } },
-                            { category: { $regex: regex } },
-                        ],
-                    },
-                },
-                project,
-            ]);
-        } else {
-            products = Product.aggregate([project]);
+        const {
+            q,
+            category,
+            brand,
+            price, // Filter by price range, e.g., "10,50"
+            sort, // Sorting options, e.g., "price_asc"
+            page = 1,
+            limit = 10,
+        } = req.query;
+
+        const query = {};
+
+        if (q) {
+            query.name = { $regex: q, $options: "i" }; // Case-insensitive search
         }
 
+        if (category) {
+            query.category = category; // Assuming category is stored as an ID
+        }
+
+        if (brand) {
+            query.brand = brand; // Assuming brand is stored as an ID
+        }
+
+        if (price) {
+            const [min, max] = price.split(",").map(Number);
+            query.price = { $gte: min, $lte: max }; // $gte: greater than or equal, $lte: less than or equal
+        }
+
+        let sortOption = {};
+        if (sort) {
+            const [field, order] = sort.split("_"); // e.g., "price_asc"
+            sortOption[field] = order === "asc" ? 1 : -1; // 1: ascending, -1: descending
+        }
+
+        const products = Product.aggregate([query]);
+
+        const options = {
+            page: Number(page),
+            limit: Number(limit),
+        };
+
         const results = await Product.aggregatePaginate(products, options);
-        return res.status(200).json(results);
-    } catch (error) {
-        next(error);
-    }
-});
-
-const getAllCategories = asyncHandler(async (req, res, next) => {
-    try {
-        const results = await Product.distinct("category");
-        return res.status(200).json(results);
-    } catch (error) {
-        next(error);
-    }
-});
-
-const getAllBrands = asyncHandler(async (req, res, next) => {
-    try {
-        const results = await Product.distinct("brand");
         return res.status(200).json(results);
     } catch (error) {
         next(error);
@@ -121,9 +94,27 @@ const addProduct = asyncHandler(async (req, res, next) => {
         rating,
         stock,
     } = req.body;
+    const userId = req?.user._id;
     try {
         if (!thumbnail[0] || images.length === 0) {
             throw new ApiError(401, "files not upload properly");
+        }
+
+        if (!userId) {
+            throw new ApiError(404, "user is not authenticated");
+        }
+
+        if (
+            !title ||
+            !description ||
+            !category ||
+            !brand ||
+            !price ||
+            !discount ||
+            !rating ||
+            !stock
+        ) {
+            throw new ApiError(401, "please fill data properly data");
         }
 
         const thumbnailPath = await uploadSingleImg(thumbnail[0].path);
@@ -142,6 +133,7 @@ const addProduct = asyncHandler(async (req, res, next) => {
             discount,
             rating,
             stock,
+            owner: userId,
             thumbnail: thumbnailPath,
             images: imagesPath,
         });
@@ -158,20 +150,19 @@ const addProduct = asyncHandler(async (req, res, next) => {
 
 const updateProduct = asyncHandler(async (req, res, next) => {
     const { title, description, category, price } = req.body;
+    const { thumbnail, images } = req.files;
     try {
         const product = await Product.findOne({ _id: req.params.productId });
 
-        // if (req?.files?.thumbnail[0]?.path) {
-        //     const thumbnailPath = await uploadSingleImag(
-        //         req?.files?.thumbnail[0]?.path
-        //     );
-        //     product.thumbnail = thumbnailPath;
-        // }
+        if (thumbnail[0]?.path) {
+            const thumbnailPath = await uploadSingleImg(thumbnail[0]?.path);
+            product.thumbnail = thumbnailPath;
+        }
 
-        // if (req?.files?.images.length > 0) {
-        //     const imagesPath = await uploadMultiImg(req?.files?.images);
-        //     product.images = imagesPath;
-        // }
+        if (images.length > 0) {
+            const imagesPath = await uploadMultiImg(images);
+            product.images = imagesPath;
+        }
 
         if (title) {
             product.title = title;
@@ -201,13 +192,19 @@ const updateProduct = asyncHandler(async (req, res, next) => {
 
 const deleteProduct = asyncHandler(async (req, res, next) => {
     try {
-        const deleted = await Product.deleteOne({ _id: req.params.productId });
+        const deleted = await Product.findOneAndDelete({
+            _id: req.params.productId,
+        });
+
+        await removeSingleImg(deleted?.thumbnail);
+        await removeMultiImg(deleted?.images);
+
         if (!deleted) {
             throw new ApiError(404, "product not deleted on database");
         }
 
         return res.status(200).json({
-            message: "product deleted successfully",
+            message: "product deleted with thumbnail & images successfully",
             statusCode: 200,
         });
     } catch (error) {
@@ -219,8 +216,6 @@ export {
     addProduct,
     singleProduct,
     getAllProducts,
-    getAllCategories,
-    getAllBrands,
     updateProduct,
     deleteProduct,
 };
