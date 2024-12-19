@@ -6,7 +6,7 @@ import {
     getMe,
     logout,
     updateUser,
-    wishlist,
+    updateWishlist,
     updateUserAvatar,
     removeUserAvatar,
 } from "../controllers/user.controller.js";
@@ -30,6 +30,6 @@ router
     .delete(removeUserAvatar);
 
 router.route("/logout").get(logout);
-router.route("/wishlist/:productId").post(wishlist);
+router.route("/wishlist/:productId").post(updateWishlist);
 
 export default router;

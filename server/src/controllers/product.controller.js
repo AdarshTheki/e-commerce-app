@@ -1,6 +1,5 @@
 import { isValidObjectId } from "mongoose";
 import { Product } from "../models/product.model.js";
-import { Review } from "../models/review.mode.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import {
@@ -9,23 +8,30 @@ import {
     removeSingleImg,
     removeMultiImg,
 } from "../utils/cloudinary.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 
-const singleProduct = asyncHandler(async (req, res, next) => {
+const getSingleProduct = asyncHandler(async (req, res, next) => {
     try {
         const { productId } = req.params;
 
         if (!isValidObjectId(productId)) {
-            throw new ApiError(401, "Invalid product ID");
+            throw new ApiError(401, "product ID is invalid");
         }
 
-        const product = await Product.findOne({ _id: productId });
-        if (!product) {
-            throw new ApiError(401, "Product not found");
-        }
-        const related = await Product.find({ category: product.category });
-        const reviews = await Review.find({ productId }).populate("userId");
+        const product = await Product.findOne({ _id: productId })
+            .populate("category", "name _id")
+            .populate("brand", "name _id")
+            .exec();
 
-        return res.status(200).json({ product, related, reviews });
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    product,
+                    "get single product by productId successfully"
+                )
+            );
     } catch (error) {
         next(error);
     }
@@ -34,49 +40,76 @@ const singleProduct = asyncHandler(async (req, res, next) => {
 const getAllProducts = asyncHandler(async (req, res, next) => {
     try {
         const {
-            q,
-            category,
-            brand,
-            price, // Filter by price range, e.g., "10,50"
-            sort, // Sorting options, e.g., "price_asc"
+            category = "",
+            brand = "",
             page = 1,
             limit = 10,
+            q = "",
         } = req.query;
 
-        const query = {};
+        // Fetch products based on the filters
+        const products = Product.aggregate([
+            {
+                $lookup: {
+                    from: "categories",
+                    localField: "category",
+                    foreignField: "_id",
+                    as: "category",
+                },
+            },
+            {
+                $lookup: {
+                    from: "brands",
+                    localField: "brand",
+                    foreignField: "_id",
+                    as: "brand",
+                },
+            },
+            {
+                $match: {
+                    $or: [
+                        {
+                            "category.name": { $in: category?.split(",") },
+                        },
+                        {
+                            "brand.name": { $in: brand?.split(",") },
+                        },
+                        {
+                            title: {
+                                $regex: q,
+                                $options: "i",
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $project: {
+                    title: 1,
+                    price: 1,
+                    rating: 1,
+                    discount: 1,
+                    thumbnail: 1,
+                    "category.name": 1,
+                    "brand.name": 1,
+                },
+            },
+        ]);
 
-        if (q) {
-            query.name = { $regex: q, $options: "i" }; // Case-insensitive search
-        }
-
-        if (category) {
-            query.category = category; // Assuming category is stored as an ID
-        }
-
-        if (brand) {
-            query.brand = brand; // Assuming brand is stored as an ID
-        }
-
-        if (price) {
-            const [min, max] = price.split(",").map(Number);
-            query.price = { $gte: min, $lte: max }; // $gte: greater than or equal, $lte: less than or equal
-        }
-
-        let sortOption = {};
-        if (sort) {
-            const [field, order] = sort.split("_"); // e.g., "price_asc"
-            sortOption[field] = order === "asc" ? 1 : -1; // 1: ascending, -1: descending
-        }
-
-        const products = Product.aggregate([query]);
-
-        const options = {
+        const results = await Product.aggregatePaginate(products, {
             page: Number(page),
             limit: Number(limit),
-        };
+        });
 
-        const results = await Product.aggregatePaginate(products, options);
-        return res.status(200).json(results);
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    results,
+                    "get all products with query successfully"
+                )
+            );
     } catch (error) {
         next(error);
     }
@@ -97,11 +130,11 @@ const addProduct = asyncHandler(async (req, res, next) => {
     const userId = req?.user._id;
     try {
         if (!thumbnail[0] || images.length === 0) {
-            throw new ApiError(401, "files not upload properly");
+            throw new ApiError(401, "add product files not upload properly");
         }
 
         if (!userId) {
-            throw new ApiError(404, "user is not authenticated");
+            throw new ApiError(404, "product user is not authenticated");
         }
 
         if (
@@ -114,14 +147,14 @@ const addProduct = asyncHandler(async (req, res, next) => {
             !rating ||
             !stock
         ) {
-            throw new ApiError(401, "please fill data properly data");
+            throw new ApiError(401, "product fill data properly");
         }
 
         const thumbnailPath = await uploadSingleImg(thumbnail[0].path);
         const imagesPath = await uploadMultiImg(images);
 
         if (!thumbnailPath && !imagesPath.length === 0) {
-            throw new ApiError(401, "files not upload properly on cloudinary");
+            throw new ApiError(401, "product files not upload on cloudinary");
         }
 
         const product = await Product.create({
@@ -142,17 +175,28 @@ const addProduct = asyncHandler(async (req, res, next) => {
             throw new ApiError(401, "create product failed");
         }
 
-        return res.status(200).json(product);
+        return res
+            .status(200)
+            .json(new ApiResponse(200, {}, "created new product successfully"));
     } catch (error) {
         next(error);
     }
 });
 
 const updateProduct = asyncHandler(async (req, res, next) => {
+    const { productId } = req.params;
     const { title, description, category, price } = req.body;
     const { thumbnail, images } = req.files;
     try {
-        const product = await Product.findOne({ _id: req.params.productId });
+        if (!isValidObjectId(productId)) {
+            throw new ApiError(401, "Invalid product ID");
+        }
+
+        const product = await Product.findOne({ _id: productId });
+
+        if (!product) {
+            throw new ApiError(401, "this product not found on database");
+        }
 
         if (thumbnail[0]?.path) {
             const thumbnailPath = await uploadSingleImg(thumbnail[0]?.path);
@@ -179,34 +223,46 @@ const updateProduct = asyncHandler(async (req, res, next) => {
         }
 
         if (!product) {
-            throw new ApiError(401, "create product failed");
+            throw new ApiError(401, "update product failed");
         }
 
         await product.save();
 
-        return res.status(200).json(product);
+        return res
+            .status(200)
+            .json(new ApiResponse(200, {}, "product updated successfully"));
     } catch (error) {
         next(error);
     }
 });
 
 const deleteProduct = asyncHandler(async (req, res, next) => {
+    const { productId } = req.params;
     try {
+        if (!isValidObjectId(productId)) {
+            throw new ApiError(401, "Invalid product ID");
+        }
+
         const deleted = await Product.findOneAndDelete({
-            _id: req.params.productId,
+            _id: productId,
         });
+
+        if (!deleted) {
+            throw new ApiError(404, "product not found on database");
+        }
 
         await removeSingleImg(deleted?.thumbnail);
         await removeMultiImg(deleted?.images);
 
-        if (!deleted) {
-            throw new ApiError(404, "product not deleted on database");
-        }
-
-        return res.status(200).json({
-            message: "product deleted with thumbnail & images successfully",
-            statusCode: 200,
-        });
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    {},
+                    "product deleted successfully also with thumbnail & images"
+                )
+            );
     } catch (error) {
         next(error);
     }
@@ -214,7 +270,7 @@ const deleteProduct = asyncHandler(async (req, res, next) => {
 
 export {
     addProduct,
-    singleProduct,
+    getSingleProduct,
     getAllProducts,
     updateProduct,
     deleteProduct,

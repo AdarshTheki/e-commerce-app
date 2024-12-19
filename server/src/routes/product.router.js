@@ -2,7 +2,7 @@ import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import {
-    singleProduct,
+    getSingleProduct,
     getAllProducts,
     addProduct,
     updateProduct,
@@ -14,7 +14,7 @@ const router = Router();
 // all of brand, category and search by products with query
 router.route("/").get(getAllProducts);
 
-router.route("/:productId").get(singleProduct);
+router.route("/:productId").get(getSingleProduct);
 
 router.route("/").post(
     verifyJWT,

@@ -1,12 +1,16 @@
+import { isValidObjectId } from "mongoose";
 import { Brand } from "../models/brand.model.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { removeSingleImg, uploadSingleImg } from "../utils/cloudinary.js";
-import { ApiError } from "../utils/ApiError.js";
 
 const allBrand = asyncHandler(async (req, res, next) => {
     try {
-        const allData = await Brand.find();
-        res.status(200).json(allData);
+        const brands = await Brand.find();
+        res.status(200).json(
+            new ApiResponse(200, brands, "get all brands successfully")
+        );
     } catch (error) {
         next(error);
     }
@@ -33,7 +37,13 @@ const createBrand = asyncHandler(async (req, res, next) => {
             thumbnail: thumbnailPath,
         });
 
-        return res.status(200).json(data);
+        if (!data) {
+            throw new ApiError(401, "create new brand failed");
+        }
+
+        return res
+            .status(200)
+            .json(new ApiResponse(200, {}, "created new brand successfully"));
     } catch (error) {
         next(error);
     }
@@ -44,7 +54,17 @@ const updateBrand = asyncHandler(async (req, res, next) => {
     const thumbnail = req.file;
     const { name, description } = req.body;
     try {
-        const brand = await Brand.findOne({ _id: req.params.brandId });
+        const { brandId } = req.params;
+
+        if (!isValidObjectId(brandId)) {
+            throw new ApiError(401, "this brand ID is not valid");
+        }
+
+        const brand = await Brand.findOne({ _id: brandId });
+
+        if (!brand) {
+            throw new ApiError(401, "this brand not found on database");
+        }
 
         if (thumbnail?.path) {
             const thumbnailPath = await uploadSingleImg(thumbnail?.path);
@@ -68,7 +88,9 @@ const updateBrand = asyncHandler(async (req, res, next) => {
 
         await brand.save();
 
-        return res.status(200).json(brand);
+        return res
+            .status(200)
+            .json(new ApiResponse(200, {}, "updated brand success"));
     } catch (error) {
         next(error);
     }
@@ -76,20 +98,27 @@ const updateBrand = asyncHandler(async (req, res, next) => {
 
 const deleteBrand = asyncHandler(async (req, res, next) => {
     try {
+        const { brandId } = req.params;
+        if (!isValidObjectId(brandId)) {
+            throw new ApiError(401, "brand ID is invalid");
+        }
         const deleted = await Brand.findOneAndDelete({
-            _id: req.params.brandId,
+            _id: brandId,
         });
 
-        await removeSingleImg(deleted.thumbnail);
+        if (!deleted) {
+            throw new ApiError(401, "brand not deleted on db");
+        }
 
         if (!deleted) {
             throw new ApiError(404, "brand not deleted on database");
         }
 
-        return res.status(200).json({
-            message: "brand deleted successfully",
-            statusCode: 200,
-        });
+        await removeSingleImg(deleted.thumbnail);
+
+        return res
+            .status(200)
+            .json(new ApiResponse(200, {}, "brand deleted successfully"));
     } catch (error) {
         next(error);
     }

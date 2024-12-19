@@ -1,5 +1,4 @@
 import { ApiError } from "../utils/ApiError.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
 
 export const errorHandler = async (err, req, res, next) => {
     if (err instanceof ApiError) {
@@ -10,9 +9,11 @@ export const errorHandler = async (err, req, res, next) => {
         });
     } else {
         // Generic error
+        console.log("error:", err?.message);
         res.status(500).json({
             success: false,
-            message: "Internal Server Error! middleware",
+            message:
+                err?.message || "Internal Server Error! middleware errorHandle",
         });
     }
 };
