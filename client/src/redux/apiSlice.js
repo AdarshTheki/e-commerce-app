@@ -25,10 +25,10 @@ export const apiSlice = createApi({
                 `/products?limit=${limit}&page=${page}&brand=${brand}&category=${category}&search=${search}`,
         }),
         brandList: builder.query({
-            query: () => '/products/brands',
+            query: () => '/brand',
         }),
         categoryList: builder.query({
-            query: () => '/products/categories',
+            query: () => '/category',
         }),
 
         // Auth Queries
@@ -131,26 +131,23 @@ export const apiSlice = createApi({
     }),
 });
 
-export const { useOrderQuery, useCheckoutMutation, useHandleWishlistMutation } = apiSlice;
-
-// Reviews
 export const {
+    useOrderQuery,
+    useCheckoutMutation,
+    useHandleWishlistMutation,
+    // reviews
     useGetReviewsQuery,
     useGetReviewByIdQuery,
     useHandleAddReviewMutation,
     useHandleUpdateReviewMutation,
     useHandleDeleteReviewMutation,
-} = apiSlice;
-
-// Products
-export const {
-    useBrandListQuery, // check
-    useCategoryListQuery, // check
+    // category
+    useCategoryListQuery,
+    // brand
+    useBrandListQuery,
+    // products
     useProductsQuery,
-} = apiSlice;
-
-// Auth
-export const {
+    // auth
     useMeQuery,
     useLoginMutation,
     useSignInMutation,

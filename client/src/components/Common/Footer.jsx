@@ -8,7 +8,7 @@ const Footer = () => {
                 <div className='grid grid-cols-1 gap-8 lg:grid-cols-3'>
                     <div>
                         <NavLink className='' to={'/'}>
-                            <p className='text-teal-600 text-4xl'>Tira</p>
+                            <p className='text-teal-600 text-3xl'>Tira</p>
                         </NavLink>
                         <p className='mt-4 max-w-xs '>
                             Lorem ipsum dolor, sit amet consectetur adipisicing elit. Esse non
@@ -20,7 +20,7 @@ const Footer = () => {
                                     href='/'
                                     rel='noreferrer'
                                     target='_blank'
-                                    className='link link-primary'>
+                                    className='link-primary'>
                                     <span className='sr-only'>Facebook</span>
                                     <svg
                                         className='h-6 w-6'
@@ -39,7 +39,7 @@ const Footer = () => {
                                     href='/'
                                     rel='noreferrer'
                                     target='_blank'
-                                    className='link link-primary'>
+                                    className='link-primary'>
                                     <span className='sr-only'>Instagram</span>
                                     <svg
                                         className='h-6 w-6'
@@ -58,7 +58,7 @@ const Footer = () => {
                                     href='/'
                                     rel='noreferrer'
                                     target='_blank'
-                                    className='link link-primary'>
+                                    className='link-primary'>
                                     <span className='sr-only'>Twitter</span>
                                     <svg
                                         className='h-6 w-6'
@@ -74,7 +74,7 @@ const Footer = () => {
                                     href='/'
                                     rel='noreferrer'
                                     target='_blank'
-                                    className='link link-primary'>
+                                    className='link-primary'>
                                     <span className='sr-only'>GitHub</span>
                                     <svg
                                         className='h-6 w-6'
@@ -93,7 +93,7 @@ const Footer = () => {
                                     href='/'
                                     rel='noreferrer'
                                     target='_blank'
-                                    className='link link-primary'>
+                                    className='link-primary'>
                                     <span className='sr-only'>Dribbble</span>
                                     <svg
                                         className='h-6 w-6'
@@ -112,29 +112,29 @@ const Footer = () => {
                     <div className='grid grid-cols-1 gap-8 sm:grid-cols-2 lg:col-span-2 lg:grid-cols-4'>
                         <div>
                             <p className='font-bold'>Services</p>
-                            <ul className='mt-6 space-y-4 text-sm'>
+                            <ul className='mt-6 space-y-2 text-sm'>
                                 <li>
-                                    <a href='#' className='link link-primary'>
+                                    <a href='#' className='link-primary'>
                                         1on1 Coaching
                                     </a>
                                 </li>
                                 <li>
-                                    <a href='#' className='link link-primary'>
+                                    <a href='#' className='link-primary'>
                                         Company Review
                                     </a>
                                 </li>
                                 <li>
-                                    <a href='#' className='link link-primary'>
+                                    <a href='#' className='link-primary'>
                                         Accounts Review
                                     </a>
                                 </li>
                                 <li>
-                                    <a href='#' className='link link-primary'>
+                                    <a href='#' className='link-primary'>
                                         HR Consulting
                                     </a>
                                 </li>
                                 <li>
-                                    <a href='#' className='link link-primary'>
+                                    <a href='#' className='link-primary'>
                                         SEO Optimisation
                                     </a>
                                 </li>
@@ -142,19 +142,19 @@ const Footer = () => {
                         </div>
                         <div>
                             <p className='font-bold'>Company</p>
-                            <ul className='mt-6 space-y-4 text-sm'>
+                            <ul className='mt-6 space-y-2 text-sm'>
                                 <li>
-                                    <a href='#' className='link link-primary'>
+                                    <a href='#' className='link-primary'>
                                         About
                                     </a>
                                 </li>
                                 <li>
-                                    <a href='#' className='link link-primary'>
+                                    <a href='#' className='link-primary'>
                                         Meet the Team
                                     </a>
                                 </li>
                                 <li>
-                                    <a href='#' className='link link-primary'>
+                                    <a href='#' className='link-primary'>
                                         Accounts Review
                                     </a>
                                 </li>
@@ -162,19 +162,19 @@ const Footer = () => {
                         </div>
                         <div>
                             <p className='font-bold'>Helpful Links</p>
-                            <ul className='mt-6 space-y-4 text-sm'>
+                            <ul className='mt-6 space-y-2 text-sm'>
                                 <li>
-                                    <a href='#' className='link link-primary'>
+                                    <a href='#' className='link-primary'>
                                         Contact
                                     </a>
                                 </li>
                                 <li>
-                                    <a href='#' className='link link-primary'>
+                                    <a href='#' className='link-primary'>
                                         FAQs
                                     </a>
                                 </li>
                                 <li>
-                                    <a href='#' className='link link-primary'>
+                                    <a href='#' className='link-primary'>
                                         Live Chat
                                     </a>
                                 </li>
@@ -182,24 +182,24 @@ const Footer = () => {
                         </div>
                         <div>
                             <p className='font-bold'>Legal</p>
-                            <ul className='mt-6 space-y-4 text-sm'>
+                            <ul className='mt-6 space-y-2 text-sm'>
                                 <li>
-                                    <a href='#' className='link link-primary'>
+                                    <a href='#' className='link-primary'>
                                         Accessibility
                                     </a>
                                 </li>
                                 <li>
-                                    <a href='#' className='link link-primary'>
+                                    <a href='#' className='link-primary'>
                                         Returns Policy
                                     </a>
                                 </li>
                                 <li>
-                                    <a href='#' className='link link-primary'>
+                                    <a href='#' className='link-primary'>
                                         Refund Policy
                                     </a>
                                 </li>
                                 <li>
-                                    <a href='#' className='link link-primary'>
+                                    <a href='#' className='link-primary'>
                                         Hiring Statistics
                                     </a>
                                 </li>

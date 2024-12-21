@@ -13,7 +13,7 @@ const TopSearching = () => {
         <div className='sm:p-5'>
             <h2 className='font-semibold text-lg my-2'>Top Products</h2>
             <div className='flex w-full flex-wrap justify-between gap-2'>
-                {data?.products.map((item) => (
+                {data?.products?.map((item) => (
                     <NavLink
                         to={`/product/${item._id}`}
                         key={item._id}
