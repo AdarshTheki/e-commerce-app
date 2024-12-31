@@ -69,10 +69,13 @@ const getAllProducts = asyncHandler(async (req, res, next) => {
                 $match: {
                     $or: [
                         {
-                            "category.name": { $in: category?.split(",") },
+                            "category.name": {
+                                $regex: category,
+                                $options: "i",
+                            },
                         },
                         {
-                            "brand.name": { $in: brand?.split(",") },
+                            "brand.name": { $regex: brand, $options: "i" },
                         },
                         {
                             title: {

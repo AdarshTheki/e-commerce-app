@@ -1,7 +1,8 @@
 import { Router } from "express";
 import {
     createCategory,
-    allCategory,
+    getAllCategories,
+    getSingleCategory,
     deleteCategory,
     updateCategory,
 } from "../controllers/category.controller.js";
@@ -11,11 +12,12 @@ const router = Router();
 
 router
     .route("/")
-    .get(allCategory)
+    .get(getAllCategories)
     .post(upload.single("thumbnail"), createCategory);
 
 router
     .route("/:categoryId")
+    .get(getSingleCategory)
     .patch(upload.single("thumbnail"), updateCategory)
     .delete(deleteCategory);
 

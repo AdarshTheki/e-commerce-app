@@ -31,9 +31,7 @@ const ProductListing = () => {
         search: search || '',
     });
 
-    console.log(data);
-
-    if (!data || isLoading || !data?.docs?.length) {
+    if (!data || isLoading || !data?.data?.docs?.length) {
         return (
             <div className='grid py-10 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-5 container mx-auto'>
                 {Array.from({ length: 20 }, (i, index) => (
@@ -45,7 +43,7 @@ const ProductListing = () => {
         );
     }
 
-    return <ProductList checkStatus={isLoading} products={data?.docs} name={category} />;
+    return <ProductList checkStatus={isLoading} products={data?.data?.docs} name={category} />;
 };
 
 export default ProductListing;

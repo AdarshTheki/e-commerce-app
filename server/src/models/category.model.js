@@ -1,20 +1,20 @@
 import mongoose, { Schema } from "mongoose";
 
-const categorySchema = new Schema({
-    name: {
-        type: String,
-        required: true,
-        index: true,
-        minlength: [5, "please enter a valid string range of 5 to 50"],
-        maxlength: [50, "please enter a valid string range of 5 to 50"],
+const categorySchema = new Schema(
+    {
+        status: {
+            type: String,
+            required: true,
+            default: "INACTIVE",
+            enum: ["ACTIVE", "INACTIVE"],
+        },
+        title: { type: String, required: true, index: true },
+        thumbnail: { type: String, required: true },
+        products: [{ type: Schema.Types.ObjectId, ref: "Product" }],
     },
-    description: {
-        type: String,
-        required: true,
-        minlength: [50, "please enter a valid string range of 50 to 500"],
-        maxlength: [500, "please enter a valid string range of 50 to 500"],
-    },
-    thumbnail: String,
-});
+    { timestamps: true }
+);
+
+categorySchema.index({ title: "text" });
 
 export const Category = mongoose.model("Category", categorySchema);

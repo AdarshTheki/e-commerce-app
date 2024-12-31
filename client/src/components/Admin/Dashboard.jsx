@@ -1,12 +1,14 @@
 import React from 'react';
 import LeftBar from './LeftBar';
-import MainBar from './MainBar';
+import { Outlet } from 'react-router-dom';
 
 const Dashboard = () => {
     return (
-        <div className='flex gap-2'>
+        <div className='flex gap-2 relative'>
             <LeftBar />
-            <MainBar />
+            <div className='w-full p-5'>
+                <Outlet />
+            </div>
         </div>
     );
 };

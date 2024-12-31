@@ -45,7 +45,7 @@ const CategoryLists = () => {
                 {data?.data.length && !isLoading ? (
                     data?.data?.map((item) => (
                         <NavLink
-                            to={`/products?category=${item?._id}`}
+                            to={`/products?category=${item?.name}`}
                             key={item?._id}
                             className='carousel-item hover:border-white rounded-2xl border border-transparent duration-300 md:w-1/5 sm:w-1/3 w-1/2 sm:ml-4 ml-2'>
                             <div className='card glass w-full'>
@@ -76,7 +76,7 @@ const BrandLists = () => {
                 {data?.data.length && !isLoading ? (
                     data?.data?.map((item) => (
                         <NavLink
-                            to={`/products?brand=${item?._id}`}
+                            to={`/products?brand=${item?.name}`}
                             key={item?._id}
                             className='carousel-item hover:border-white rounded-2xl border border-transparent duration-300 md:w-1/5 sm:w-1/3 w-1/2 sm:ml-4 ml-2'>
                             <div className='card glass w-full'>

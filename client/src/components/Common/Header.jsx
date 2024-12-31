@@ -16,7 +16,7 @@ const Header = () => {
     };
 
     return (
-        <div className='sticky bg-base-300 text-base-content w-full top-0 z-40 shadow'>
+        <>
             <div className='pr-2 flex items-center justify-end gap-3'>
                 <NavLink className='text-sm link-primary' to='/'>
                     Track Order
@@ -88,7 +88,7 @@ const Header = () => {
                     </NavLink>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

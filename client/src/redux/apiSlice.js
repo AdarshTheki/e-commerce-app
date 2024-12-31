@@ -24,13 +24,35 @@ export const apiSlice = createApi({
             query: ({ limit = 20, page = 1, brand = '', category = '', search = '' }) =>
                 `/products?limit=${limit}&page=${page}&brand=${brand}&category=${category}&search=${search}`,
         }),
-        brandList: builder.query({
-            query: () => '/brand',
-        }),
+        // Category
         categoryList: builder.query({
             query: () => '/category',
         }),
-
+        getCategory: builder.query({
+            query: (id) => `/category/${id}`,
+        }),
+        categoryCreate: builder.mutation({
+            query: (item) => ({ url: '/category', method: 'POST', body: item }),
+        }),
+        categoryUpdate: builder.mutation({
+            query: (item) => ({ url: `/category/${item?._id}`, method: 'PATCH', body: item }),
+        }),
+        categoryDelete: builder.mutation({
+            query: (item) => ({ url: `/category/${item?._id}`, method: 'DELETE' }),
+        }),
+        // Brands
+        brandList: builder.query({
+            query: () => '/brand',
+        }),
+        brandCreate: builder.mutation({
+            query: (item) => ({ url: '/brand', method: 'POST', body: item }),
+        }),
+        brandUpdate: builder.mutation({
+            query: (item) => ({ url: `/brand/${item?._id}`, method: 'PATCH', body: item }),
+        }),
+        brandDelete: builder.mutation({
+            query: (item) => ({ url: `/brand/${item?._id}`, method: 'DELETE' }),
+        }),
         // Auth Queries
         me: builder.query({
             query: () => `/auth/me`,
@@ -143,8 +165,15 @@ export const {
     useHandleDeleteReviewMutation,
     // category
     useCategoryListQuery,
+    useGetCategoryQuery,
+    useCategoryCreateMutation,
+    useCategoryDeleteMutation,
+    useCategoryUpdateMutation,
     // brand
     useBrandListQuery,
+    useBrandCreateMutation,
+    useBrandDeleteMutation,
+    useBrandUpdateMutation,
     // products
     useProductsQuery,
     // auth
