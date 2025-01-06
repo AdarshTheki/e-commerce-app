@@ -1,10 +1,12 @@
 import { app } from "./app.js";
 import connectDB from "./connectDB.js";
 
+const port = process.env.PORT || 8000;
+
 connectDB()
     .then(() => {
-        app.listen(process.env.PORT || 8000, () => {
-            console.log(`Running Ports http://localhost:${process.env.PORT}`);
+        app.listen(port, () => {
+            console.log(`Running http://localhost:${port}`);
         });
     })
     .catch((err) => console.log("MongoDB Connection Error !! ", err?.message));

@@ -15,4 +15,4 @@ const subCategorySchema = new Schema(
 
 subCategorySchema.index({ title: "text" });
 
-export const SubCategory = mongoose.model("Sub_Category", subCategorySchema);
+export const SubCategory = mongoose.model("SubCategory", subCategorySchema);

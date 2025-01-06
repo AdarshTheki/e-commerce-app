@@ -16,6 +16,6 @@ const superCategorySchema = new Schema(
 superCategorySchema.index({ title: "text" });
 
 export const SuperCategory = mongoose.model(
-    "Super_Category",
+    "SuperCategory",
     superCategorySchema
 );

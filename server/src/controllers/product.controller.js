@@ -19,8 +19,10 @@ const getSingleProduct = asyncHandler(async (req, res, next) => {
         }
 
         const product = await Product.findOne({ _id: productId })
-            .populate("category", "name _id")
-            .populate("brand", "name _id")
+            .populate("category", "-products")
+            .populate("subCategory", "-products")
+            .populate("brand")
+            .populate("superCategory")
             .exec();
 
         return res
@@ -40,76 +42,33 @@ const getSingleProduct = asyncHandler(async (req, res, next) => {
 const getAllProducts = asyncHandler(async (req, res, next) => {
     try {
         const {
-            category = "",
-            brand = "",
+            categoryId = "",
+            brandId = "",
+            subCategoryId = "",
+            superCategoryId = "",
             page = 1,
             limit = 10,
-            q = "",
         } = req.query;
 
-        // Fetch products based on the filters
-        const products = Product.aggregate([
-            {
-                $lookup: {
-                    from: "categories",
-                    localField: "category",
-                    foreignField: "_id",
-                    as: "category",
-                },
-            },
-            {
-                $lookup: {
-                    from: "brands",
-                    localField: "brand",
-                    foreignField: "_id",
-                    as: "brand",
-                },
-            },
-            {
-                $match: {
-                    $or: [
-                        {
-                            "category.name": {
-                                $regex: category,
-                                $options: "i",
-                            },
-                        },
-                        {
-                            "brand.name": { $regex: brand, $options: "i" },
-                        },
-                        {
-                            title: {
-                                $regex: q,
-                                $options: "i",
-                            },
-                        },
-                    ],
-                },
-            },
-            {
-                $project: {
-                    title: 1,
-                    price: 1,
-                    rating: 1,
-                    discount: 1,
-                    thumbnail: 1,
-                    "category.name": 1,
-                    "brand.name": 1,
-                },
-            },
-        ]);
+        let q = {};
+        categoryId && (q.category = categoryId);
+        subCategoryId && (q.subCategory = subCategoryId);
+        superCategoryId && (q.superCategory = superCategoryId);
+        brandId && (q.brand = brandId);
 
-        const results = await Product.aggregatePaginate(products, {
-            page: Number(page),
-            limit: Number(limit),
-        });
+        const products = await Product.find(q)
+            .populate("lowest_variants")
+            .select("-specification -overview")
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .exec();
 
         return res
             .status(200)
             .json(
                 new ApiResponse(
                     200,
-                    results,
+                    products,
                     "get all products with query successfully"
                 )
             );
